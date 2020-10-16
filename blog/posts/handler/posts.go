@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/micro/go-micro/v3/errors"
-	gostore "github.com/micro/go-micro/v3/store"
 	"github.com/micro/micro/v3/service/logger"
 	"github.com/micro/micro/v3/service/store"
 
@@ -32,7 +31,7 @@ type Post struct {
 	Content         string   `json:"content"`
 	CreateTimestamp int64    `json:"create_timestamp"`
 	UpdateTimestamp int64    `json:"update_timestamp"`
-	TagNames        []string `json:"tagNames"`
+	Tags            []string `json:"tags"`
 }
 
 type Posts struct {
@@ -40,23 +39,23 @@ type Posts struct {
 }
 
 func (p *Posts) Save(ctx context.Context, req *posts.SaveRequest, rsp *posts.SaveResponse) error {
-	if len(req.Post.Id) == 0 || len(req.Post.Title) == 0 || len(req.Post.Content) == 0 {
-		return errors.BadRequest("posts.save.input-check", "Id, title or content is missing")
+	if len(req.Id) == 0 {
+		return errors.BadRequest("posts.save.input-check", "Id is missing")
 	}
 
 	// read by post
-	records, err := store.Read(fmt.Sprintf("%v:%v", idPrefix, req.Post.Id))
-	if err != nil && err != gostore.ErrNotFound {
+	records, err := store.Read(fmt.Sprintf("%v:%v", idPrefix, req.Id))
+	if err != nil && err != store.ErrNotFound {
 		return errors.InternalServerError("posts.save.store-id-read", "Failed to read post by id: %v", err.Error())
 	}
-	postSlug := slug.Make(req.Post.Title)
+	postSlug := slug.Make(req.Title)
 	// If no existing record is found, create a new one
 	if len(records) == 0 {
 		post := &Post{
-			ID:              req.Post.Id,
-			Title:           req.Post.Title,
-			Content:         req.Post.Content,
-			TagNames:        req.Post.TagNames,
+			ID:              req.Id,
+			Title:           req.Title,
+			Content:         req.Content,
+			Tags:            req.Tags,
 			Slug:            postSlug,
 			CreateTimestamp: time.Now().Unix(),
 		}
@@ -72,27 +71,48 @@ func (p *Posts) Save(ctx context.Context, req *posts.SaveRequest, rsp *posts.Sav
 	if err != nil {
 		return errors.InternalServerError("posts.save.unmarshal", "Failed to unmarshal old post: %v", err.Error())
 	}
+
 	post := &Post{
-		ID:              req.Post.Id,
-		Title:           req.Post.Title,
-		Content:         req.Post.Content,
-		Slug:            postSlug,
-		TagNames:        req.Post.TagNames,
+		ID:              req.Id,
+		Title:           oldPost.Title,
+		Content:         oldPost.Content,
+		Slug:            oldPost.Slug,
+		Tags:            oldPost.Tags,
 		CreateTimestamp: oldPost.CreateTimestamp,
 		UpdateTimestamp: time.Now().Unix(),
+	}
+	if len(req.Title) > 0 {
+		post.Title = req.Title
+		post.Slug = slug.Make(post.Title)
+	}
+	if len(req.Slug) > 0 {
+		post.Slug = req.Slug
+	}
+	if len(req.Content) > 0 {
+		post.Content = req.Content
+	}
+	if len(req.Tags) > 0 {
+		// Handle the special case of deletion
+		if len(req.Tags) == 0 && req.Tags[0] == "" {
+			post.Tags = []string{}
+		} else {
+			post.Tags = req.Tags
+		}
 	}
 
 	// Check if slug exists
 	recordsBySlug, err := store.Read(fmt.Sprintf("%v:%v", slugPrefix, postSlug))
-	if err != nil && err != gostore.ErrNotFound {
+	if err != nil && err != store.ErrNotFound {
 		return errors.InternalServerError("posts.save.store-read", "Failed to read post by slug: %v", err.Error())
 	}
-	otherSlugPost := &Post{}
-	err = json.Unmarshal(record.Value, otherSlugPost)
-	if err != nil {
-		return errors.InternalServerError("posts.save.slug-unmarshal", "Error unmarshaling other post with same slug: %v", err.Error())
-	}
-	if len(recordsBySlug) > 0 && oldPost.ID != otherSlugPost.ID {
+	if len(recordsBySlug) > 0 {
+		otherSlugPost := &Post{}
+		err = json.Unmarshal(recordsBySlug[0].Value, otherSlugPost)
+		if oldPost.ID != otherSlugPost.ID {
+			if err != nil {
+				return errors.InternalServerError("posts.save.slug-unmarshal", "Error unmarshaling other post with same slug: %v", err.Error())
+			}
+		}
 		return errors.BadRequest("posts.save.slug-check", "An other post with this slug already exists")
 	}
 
@@ -105,7 +125,7 @@ func (p *Posts) savePost(ctx context.Context, oldPost, post *Post) error {
 		return err
 	}
 
-	err = store.Write(&gostore.Record{
+	err = store.Write(&store.Record{
 		Key:   fmt.Sprintf("%v:%v", idPrefix, post.ID),
 		Value: bytes,
 	})
@@ -119,14 +139,14 @@ func (p *Posts) savePost(ctx context.Context, oldPost, post *Post) error {
 			return err
 		}
 	}
-	err = store.Write(&gostore.Record{
+	err = store.Write(&store.Record{
 		Key:   fmt.Sprintf("%v:%v", slugPrefix, post.Slug),
 		Value: bytes,
 	})
 	if err != nil {
 		return err
 	}
-	err = store.Write(&gostore.Record{
+	err = store.Write(&store.Record{
 		Key:   fmt.Sprintf("%v:%v", timeStampPrefix, math.MaxInt64-post.CreateTimestamp),
 		Value: bytes,
 	})
@@ -134,11 +154,11 @@ func (p *Posts) savePost(ctx context.Context, oldPost, post *Post) error {
 		return err
 	}
 	if oldPost == nil {
-		for _, tagName := range post.TagNames {
-			_, err := p.Tags.IncreaseCount(ctx, &tags.IncreaseCountRequest{
-				ParentID: post.ID,
-				Type:     tagType,
-				Title:    tagName,
+		for _, tagName := range post.Tags {
+			_, err := p.Tags.Add(ctx, &tags.AddRequest{
+				ResourceID: post.ID,
+				Type:       tagType,
+				Title:      tagName,
 			})
 			if err != nil {
 				return err
@@ -146,7 +166,7 @@ func (p *Posts) savePost(ctx context.Context, oldPost, post *Post) error {
 		}
 		return nil
 	}
-	return p.diffTags(ctx, post.ID, oldPost.TagNames, post.TagNames)
+	return p.diffTags(ctx, post.ID, oldPost.Tags, post.Tags)
 }
 
 func (p *Posts) diffTags(ctx context.Context, parentID string, oldTagNames, newTagNames []string) error {
@@ -161,10 +181,10 @@ func (p *Posts) diffTags(ctx context.Context, parentID string, oldTagNames, newT
 	for i := range oldTags {
 		_, stillThere := newTags[i]
 		if !stillThere {
-			_, err := p.Tags.DecreaseCount(ctx, &tags.DecreaseCountRequest{
-				ParentID: parentID,
-				Type:     tagType,
-				Title:    i,
+			_, err := p.Tags.Remove(ctx, &tags.RemoveRequest{
+				ResourceID: parentID,
+				Type:       tagType,
+				Title:      i,
 			})
 			if err != nil {
 				logger.Errorf("Error decreasing count for tag '%v' with type '%v' for parent '%v'", i, tagType, parentID)
@@ -174,13 +194,13 @@ func (p *Posts) diffTags(ctx context.Context, parentID string, oldTagNames, newT
 	for i := range newTags {
 		_, newlyAdded := oldTags[i]
 		if newlyAdded {
-			_, err := p.Tags.IncreaseCount(ctx, &tags.IncreaseCountRequest{
-				ParentID: parentID,
-				Type:     tagType,
-				Title:    i,
+			_, err := p.Tags.Add(ctx, &tags.AddRequest{
+				ResourceID: parentID,
+				Type:       tagType,
+				Title:      i,
 			})
 			if err != nil {
-				logger.Errorf("Error increasing count for tag '%v' with type '%v' for parent '%v'", i, tagType, parentID)
+				logger.Errorf("Error increasing count for tag '%v' with type '%v' for parent '%v': %v", i, tagType, parentID, err)
 			}
 		}
 	}
@@ -188,11 +208,15 @@ func (p *Posts) diffTags(ctx context.Context, parentID string, oldTagNames, newT
 }
 
 func (p *Posts) Query(ctx context.Context, req *pb.QueryRequest, rsp *pb.QueryResponse) error {
-	var records []*gostore.Record
+	var records []*store.Record
 	var err error
 	if len(req.Slug) > 0 {
 		key := fmt.Sprintf("%v:%v", slugPrefix, req.Slug)
 		logger.Infof("Reading post by slug: %v", req.Slug)
+		records, err = store.Read("", store.Prefix(key))
+	} else if len(req.Id) > 0 {
+		key := fmt.Sprintf("%v:%v", idPrefix, req.Id)
+		logger.Infof("Reading post by id: %v", req.Id)
 		records, err = store.Read("", store.Prefix(key))
 	} else {
 		key := fmt.Sprintf("%v:", timeStampPrefix)
@@ -218,11 +242,11 @@ func (p *Posts) Query(ctx context.Context, req *pb.QueryRequest, rsp *pb.QueryRe
 			return errors.InternalServerError("posts.save.unmarshal", "Failed to unmarshal old post: %v", err.Error())
 		}
 		rsp.Posts[i] = &pb.Post{
-			Id:       postRecord.ID,
-			Title:    postRecord.Title,
-			Slug:     postRecord.Slug,
-			Content:  postRecord.Content,
-			TagNames: postRecord.TagNames,
+			Id:      postRecord.ID,
+			Title:   postRecord.Title,
+			Slug:    postRecord.Slug,
+			Content: postRecord.Content,
+			Tags:    postRecord.Tags,
 		}
 	}
 	return nil
@@ -231,7 +255,7 @@ func (p *Posts) Query(ctx context.Context, req *pb.QueryRequest, rsp *pb.QueryRe
 func (p *Posts) Delete(ctx context.Context, req *pb.DeleteRequest, rsp *pb.DeleteResponse) error {
 	logger.Info("Received Post.Delete request")
 	records, err := store.Read(fmt.Sprintf("%v:%v", idPrefix, req.Id))
-	if err != nil && err != gostore.ErrNotFound {
+	if err != nil && err != store.ErrNotFound {
 		return err
 	}
 	if len(records) == 0 {
