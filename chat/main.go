@@ -16,7 +16,7 @@ func main() {
 	)
 
 	// Register the handler against the server
-	pb.RegisterChatHandler(srv.Server(), handler.New())
+	pb.RegisterChatHandler(srv.Server(), new(handler.Chat))
 
 	// Run the service
 	if err := srv.Run(); err != nil {

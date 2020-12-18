@@ -2,84 +2,89 @@ package handler
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"math"
 	"time"
 
-	"github.com/micro/go-micro/v3/errors"
+	"github.com/micro/micro/v3/service/errors"
 	"github.com/micro/micro/v3/service/logger"
 	"github.com/micro/micro/v3/service/store"
 
+	"github.com/micro/dev/model"
+
 	"github.com/gosimple/slug"
-	pb "github.com/micro/services/blog/posts/proto/posts"
-	posts "github.com/micro/services/blog/posts/proto/posts"
+	proto "github.com/micro/services/blog/posts/proto"
 	tags "github.com/micro/services/blog/tags/proto"
 )
 
 const (
-	tagType         = "post-tag"
-	slugPrefix      = "slug"
-	idPrefix        = "id"
-	timeStampPrefix = "timestamp"
+	tagType = "post-tag"
 )
-
-type Post struct {
-	ID              string   `json:"id"`
-	Title           string   `json:"title"`
-	Slug            string   `json:"slug"`
-	Content         string   `json:"content"`
-	CreateTimestamp int64    `json:"create_timestamp"`
-	UpdateTimestamp int64    `json:"update_timestamp"`
-	Tags            []string `json:"tags"`
-}
 
 type Posts struct {
 	Tags tags.TagsService
+	db   model.Model
 }
 
-func (p *Posts) Save(ctx context.Context, req *posts.SaveRequest, rsp *posts.SaveResponse) error {
+func NewPosts(tagsService tags.TagsService) *Posts {
+	createdIndex := model.ByEquality("created")
+	createdIndex.Order.Type = model.OrderTypeDesc
+
+	return &Posts{
+		Tags: tagsService,
+		db: model.New(
+			store.DefaultStore,
+			"posts",
+			model.Indexes(model.ByEquality("slug"), createdIndex),
+			&model.ModelOptions{
+				Debug: false,
+			},
+		),
+	}
+}
+
+func (p *Posts) Save(ctx context.Context, req *proto.SaveRequest, rsp *proto.SaveResponse) error {
 	if len(req.Id) == 0 {
-		return errors.BadRequest("posts.save.input-check", "Id is missing")
+		return errors.BadRequest("proto.save.input-check", "Id is missing")
 	}
 
 	// read by post
-	records, err := store.Read(fmt.Sprintf("%v:%v", idPrefix, req.Id))
-	if err != nil && err != store.ErrNotFound {
-		return errors.InternalServerError("posts.save.store-id-read", "Failed to read post by id: %v", err.Error())
+	posts := []*proto.Post{}
+	q := model.Equals("id", req.Id)
+	q.Order.Type = model.OrderTypeUnordered
+	err := p.db.List(q, &posts)
+	if err != nil {
+		return errors.InternalServerError("proto.save.store-id-read", "Failed to read post by id: %v", err.Error())
 	}
 	postSlug := slug.Make(req.Title)
 	// If no existing record is found, create a new one
-	if len(records) == 0 {
-		post := &Post{
-			ID:              req.Id,
-			Title:           req.Title,
-			Content:         req.Content,
-			Tags:            req.Tags,
-			Slug:            postSlug,
-			CreateTimestamp: time.Now().Unix(),
+	if len(posts) == 0 {
+		post := &proto.Post{
+			Id:       req.Id,
+			Title:    req.Title,
+			Content:  req.Content,
+			Tags:     req.Tags,
+			Slug:     postSlug,
+			Created:  time.Now().Unix(),
+			Metadata: req.Metadata,
+			Image:    req.Image,
 		}
 		err := p.savePost(ctx, nil, post)
 		if err != nil {
-			return errors.InternalServerError("posts.save.post-save", "Failed to save new post: %v", err.Error())
+			return errors.InternalServerError("proto.save.post-save", "Failed to save new post: %v", err.Error())
 		}
 		return nil
 	}
-	record := records[0]
-	oldPost := &Post{}
-	err = json.Unmarshal(record.Value, oldPost)
-	if err != nil {
-		return errors.InternalServerError("posts.save.unmarshal", "Failed to unmarshal old post: %v", err.Error())
-	}
+	oldPost := posts[0]
 
-	post := &Post{
-		ID:              req.Id,
-		Title:           oldPost.Title,
-		Content:         oldPost.Content,
-		Slug:            oldPost.Slug,
-		Tags:            oldPost.Tags,
-		CreateTimestamp: oldPost.CreateTimestamp,
-		UpdateTimestamp: time.Now().Unix(),
+	post := &proto.Post{
+		Id:       req.Id,
+		Title:    oldPost.Title,
+		Content:  oldPost.Content,
+		Slug:     oldPost.Slug,
+		Tags:     oldPost.Tags,
+		Created:  oldPost.Created,
+		Updated:  time.Now().Unix(),
+		Metadata: req.Metadata,
+		Image:    req.Image,
 	}
 	if len(req.Title) > 0 {
 		post.Title = req.Title
@@ -100,63 +105,30 @@ func (p *Posts) Save(ctx context.Context, req *posts.SaveRequest, rsp *posts.Sav
 		}
 	}
 
-	// Check if slug exists
-	recordsBySlug, err := store.Read(fmt.Sprintf("%v:%v", slugPrefix, postSlug))
-	if err != nil && err != store.ErrNotFound {
-		return errors.InternalServerError("posts.save.store-read", "Failed to read post by slug: %v", err.Error())
+	postsWithThisSlug := []*proto.Post{}
+	err = p.db.List(model.Equals("slug", postSlug), &postsWithThisSlug)
+	if err != nil {
+		return errors.InternalServerError("proto.save.store-read", "Failed to read post by slug: %v", err.Error())
 	}
-	if len(recordsBySlug) > 0 {
-		otherSlugPost := &Post{}
-		err = json.Unmarshal(recordsBySlug[0].Value, otherSlugPost)
-		if oldPost.ID != otherSlugPost.ID {
-			if err != nil {
-				return errors.InternalServerError("posts.save.slug-unmarshal", "Error unmarshaling other post with same slug: %v", err.Error())
-			}
+
+	if len(postsWithThisSlug) > 0 {
+		if oldPost.Id != postsWithThisSlug[0].Id {
+			return errors.BadRequest("proto.save.slug-check", "An other post with this slug already exists")
 		}
-		return errors.BadRequest("posts.save.slug-check", "An other post with this slug already exists")
 	}
 
 	return p.savePost(ctx, oldPost, post)
 }
 
-func (p *Posts) savePost(ctx context.Context, oldPost, post *Post) error {
-	bytes, err := json.Marshal(post)
-	if err != nil {
-		return err
-	}
-
-	err = store.Write(&store.Record{
-		Key:   fmt.Sprintf("%v:%v", idPrefix, post.ID),
-		Value: bytes,
-	})
-	if err != nil {
-		return err
-	}
-	// Delete old slug index if the slug has changed
-	if oldPost != nil && oldPost.Slug != post.Slug {
-		err = store.Delete(fmt.Sprintf("%v:%v", slugPrefix, post.Slug))
-		if err != nil {
-			return err
-		}
-	}
-	err = store.Write(&store.Record{
-		Key:   fmt.Sprintf("%v:%v", slugPrefix, post.Slug),
-		Value: bytes,
-	})
-	if err != nil {
-		return err
-	}
-	err = store.Write(&store.Record{
-		Key:   fmt.Sprintf("%v:%v", timeStampPrefix, math.MaxInt64-post.CreateTimestamp),
-		Value: bytes,
-	})
+func (p *Posts) savePost(ctx context.Context, oldPost, post *proto.Post) error {
+	err := p.db.Save(post)
 	if err != nil {
 		return err
 	}
 	if oldPost == nil {
 		for _, tagName := range post.Tags {
 			_, err := p.Tags.Add(ctx, &tags.AddRequest{
-				ResourceID: post.ID,
+				ResourceID: post.Id,
 				Type:       tagType,
 				Title:      tagName,
 			})
@@ -166,7 +138,7 @@ func (p *Posts) savePost(ctx context.Context, oldPost, post *Post) error {
 		}
 		return nil
 	}
-	return p.diffTags(ctx, post.ID, oldPost.Tags, post.Tags)
+	return p.diffTags(ctx, post.Id, oldPost.Tags, post.Tags)
 }
 
 func (p *Posts) diffTags(ctx context.Context, parentID string, oldTagNames, newTagNames []string) error {
@@ -207,76 +179,34 @@ func (p *Posts) diffTags(ctx context.Context, parentID string, oldTagNames, newT
 	return nil
 }
 
-func (p *Posts) Query(ctx context.Context, req *pb.QueryRequest, rsp *pb.QueryResponse) error {
-	var records []*store.Record
-	var err error
+func (p *Posts) Query(ctx context.Context, req *proto.QueryRequest, rsp *proto.QueryResponse) error {
+	var q model.Query
 	if len(req.Slug) > 0 {
-		key := fmt.Sprintf("%v:%v", slugPrefix, req.Slug)
 		logger.Infof("Reading post by slug: %v", req.Slug)
-		records, err = store.Read("", store.Prefix(key))
+		q = model.Equals("slug", req.Slug)
 	} else if len(req.Id) > 0 {
-		key := fmt.Sprintf("%v:%v", idPrefix, req.Id)
 		logger.Infof("Reading post by id: %v", req.Id)
-		records, err = store.Read("", store.Prefix(key))
+		q = model.Equals("id", req.Id)
+		q.Order.Type = model.OrderTypeUnordered
 	} else {
-		key := fmt.Sprintf("%v:", timeStampPrefix)
+		q = model.Equals("created", nil)
+		q.Order.Type = model.OrderTypeDesc
 		var limit uint
 		limit = 20
 		if req.Limit > 0 {
 			limit = uint(req.Limit)
 		}
+		q.Limit = int64(limit)
+		q.Offset = req.Offset
 		logger.Infof("Listing posts, offset: %v, limit: %v", req.Offset, limit)
-		records, err = store.Read("", store.Prefix(key),
-			store.Offset(uint(req.Offset)),
-			store.Limit(limit))
 	}
 
-	if err != nil {
-		return errors.BadRequest("posts.query.store-read", "Failed to read from store: %v", err.Error())
-	}
-	rsp.Posts = make([]*pb.Post, len(records))
-	for i, record := range records {
-		postRecord := &Post{}
-		err := json.Unmarshal(record.Value, postRecord)
-		if err != nil {
-			return errors.InternalServerError("posts.save.unmarshal", "Failed to unmarshal old post: %v", err.Error())
-		}
-		rsp.Posts[i] = &pb.Post{
-			Id:      postRecord.ID,
-			Title:   postRecord.Title,
-			Slug:    postRecord.Slug,
-			Content: postRecord.Content,
-			Tags:    postRecord.Tags,
-		}
-	}
-	return nil
+	return p.db.List(q, &rsp.Posts)
 }
 
-func (p *Posts) Delete(ctx context.Context, req *pb.DeleteRequest, rsp *pb.DeleteResponse) error {
+func (p *Posts) Delete(ctx context.Context, req *proto.DeleteRequest, rsp *proto.DeleteResponse) error {
 	logger.Info("Received Post.Delete request")
-	records, err := store.Read(fmt.Sprintf("%v:%v", idPrefix, req.Id))
-	if err != nil && err != store.ErrNotFound {
-		return err
-	}
-	if len(records) == 0 {
-		return fmt.Errorf("Post with ID %v not found", req.Id)
-	}
-	post := &Post{}
-	err = json.Unmarshal(records[0].Value, post)
-	if err != nil {
-		return err
-	}
-
-	// Delete by ID
-	err = store.Delete(fmt.Sprintf("%v:%v", idPrefix, post.ID))
-	if err != nil {
-		return err
-	}
-	// Delete by slug
-	err = store.Delete(fmt.Sprintf("%v:%v", slugPrefix, post.Slug))
-	if err != nil {
-		return err
-	}
-	// Delete by timeStamp
-	return store.Delete(fmt.Sprintf("%v:%v", timeStampPrefix, post.CreateTimestamp))
+	q := model.Equals("id", req.Id)
+	q.Order.Type = model.OrderTypeUnordered
+	return p.db.Delete(q)
 }

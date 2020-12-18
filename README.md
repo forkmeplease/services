@@ -7,25 +7,30 @@ This repo includes reusable micro services.
 Services provides a home for real world examples for using Micro v3.
 
 - [blog](blog) - A blog app composed as micro services
+- [chat](chat) - An instant messaging or group chat service
 - [helloworld](helloworld) - A simple helloworld service
 - [messages](messages) - A service for text messages
+- [notes](notes) - A note taking service
 - [test](test) - A set of sample test services for Micro
+- [users](users) - User management and basic auth
 
 ## Usage
 
-Pull the service directly from github
+Run Micro
 
 ```
-# install micro
-go get github.com/micro/micro/v3
-
-# run the server
 micro server
+```
 
-# login with user: admin pass: micro
+Login (user: admin pass: micro)
+
+```
 micro login
+```
 
-# run the service
+Run a service from source
+
+```
 micro run github.com/micro/services/helloworld
 ```
 
