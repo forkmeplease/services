@@ -183,6 +183,30 @@ func (p *Posts) diffTags(ctx context.Context, parentID string, oldTagNames, newT
 	return nil
 }
 
+func (p *Posts) Index(ctx context.Context, req *proto.IndexRequest, rsp *proto.IndexResponse) error {
+	// create a simple descending order query
+	q := model.QueryEquals("created", nil)
+	q.Order.Type = model.OrderTypeDesc
+	q.Offset = req.Offset
+	q.Limit = req.Limit
+
+	var posts []*proto.Post
+
+	// read all the records
+	if err := p.db.Read(q, &posts); err != nil {
+		return err
+	}
+
+	// iterate and add
+	for _, post := range posts {
+		// strip the content
+		post.Content = ""
+		rsp.Posts = append(rsp.Posts, post)
+	}
+
+	return nil
+}
+
 func (p *Posts) Query(ctx context.Context, req *proto.QueryRequest, rsp *proto.QueryResponse) error {
 	var q model.Query
 	if len(req.Slug) > 0 {
@@ -205,7 +229,11 @@ func (p *Posts) Query(ctx context.Context, req *proto.QueryRequest, rsp *proto.Q
 		logger.Infof("Listing posts, offset: %v, limit: %v", req.Offset, limit)
 	}
 
-	return p.db.Read(q, &rsp.Posts)
+	if err := p.db.Read(q, &rsp.Posts); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Posts) Delete(ctx context.Context, req *proto.DeleteRequest, rsp *proto.DeleteResponse) error {
