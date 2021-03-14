@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
+	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/SlyMarbo/rss v1.0.1
 	github.com/getkin/kin-openapi v0.26.0
 	github.com/golang/protobuf v1.4.3
@@ -11,7 +12,7 @@ require (
 	github.com/gosimple/slug v1.9.0
 	github.com/hailocab/go-geoindex v0.0.0-20160127134810-64631bfe9711
 	github.com/micro/dev v0.0.0-20201117163752-d3cfc9788dfa
-	github.com/micro/micro/v3 v3.0.5-0.20210205114115-75aad3b94f08
+	github.com/micro/micro/v3 v3.1.1-0.20210301204023-e0e966d08c06
 	github.com/miekg/dns v1.1.31 // indirect
 	github.com/stoewer/go-strcase v1.2.0
 	github.com/stretchr/testify v1.6.1
