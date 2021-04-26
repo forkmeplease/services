@@ -4,7 +4,12 @@ GOPATH:=$(shell go env GOPATH)
 
 .PHONY: proto
 proto:
-	protoc --proto_path=${GOPATH}/src:. --micro_out=. --go_out=. proto/helloworld/helloworld.proto
+	protoc --openapi_out=. --proto_path=${GOPATH}/src:. --micro_out=. --go_out=. proto/helloworld.proto
+
+.PHONY: docs
+docs:
+	protoc --openapi_out=. --proto_path=${GOPATH}/src:. --micro_out=. --go_out=. proto/helloworld.proto
+	@redoc-cli bundle api-helloworld.json
 
 .PHONY: build
 build: proto
