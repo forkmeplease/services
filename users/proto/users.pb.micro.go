@@ -6,7 +6,6 @@ package users
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	_ "google.golang.org/protobuf/types/known/wrapperspb"
 	math "math"
 )
 
@@ -45,16 +44,13 @@ func NewUsersEndpoints() []*api.Endpoint {
 type UsersService interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...client.CallOption) (*CreateResponse, error)
 	Read(ctx context.Context, in *ReadRequest, opts ...client.CallOption) (*ReadResponse, error)
-	ReadByEmail(ctx context.Context, in *ReadByEmailRequest, opts ...client.CallOption) (*ReadByEmailResponse, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...client.CallOption) (*UpdateResponse, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...client.CallOption) (*DeleteResponse, error)
-	List(ctx context.Context, in *ListRequest, opts ...client.CallOption) (*ListResponse, error)
-	// Login using email and password returns the users profile and a token
+	Search(ctx context.Context, in *SearchRequest, opts ...client.CallOption) (*SearchResponse, error)
+	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...client.CallOption) (*UpdatePasswordResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*LoginResponse, error)
-	// Logout expires all tokens for the user
 	Logout(ctx context.Context, in *LogoutRequest, opts ...client.CallOption) (*LogoutResponse, error)
-	// Validate a token, each time a token is validated it extends its lifetime for another week
-	Validate(ctx context.Context, in *ValidateRequest, opts ...client.CallOption) (*ValidateResponse, error)
+	ReadSession(ctx context.Context, in *ReadSessionRequest, opts ...client.CallOption) (*ReadSessionResponse, error)
 }
 
 type usersService struct {
@@ -89,16 +85,6 @@ func (c *usersService) Read(ctx context.Context, in *ReadRequest, opts ...client
 	return out, nil
 }
 
-func (c *usersService) ReadByEmail(ctx context.Context, in *ReadByEmailRequest, opts ...client.CallOption) (*ReadByEmailResponse, error) {
-	req := c.c.NewRequest(c.name, "Users.ReadByEmail", in)
-	out := new(ReadByEmailResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *usersService) Update(ctx context.Context, in *UpdateRequest, opts ...client.CallOption) (*UpdateResponse, error) {
 	req := c.c.NewRequest(c.name, "Users.Update", in)
 	out := new(UpdateResponse)
@@ -119,9 +105,19 @@ func (c *usersService) Delete(ctx context.Context, in *DeleteRequest, opts ...cl
 	return out, nil
 }
 
-func (c *usersService) List(ctx context.Context, in *ListRequest, opts ...client.CallOption) (*ListResponse, error) {
-	req := c.c.NewRequest(c.name, "Users.List", in)
-	out := new(ListResponse)
+func (c *usersService) Search(ctx context.Context, in *SearchRequest, opts ...client.CallOption) (*SearchResponse, error) {
+	req := c.c.NewRequest(c.name, "Users.Search", in)
+	out := new(SearchResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersService) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...client.CallOption) (*UpdatePasswordResponse, error) {
+	req := c.c.NewRequest(c.name, "Users.UpdatePassword", in)
+	out := new(UpdatePasswordResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -149,9 +145,9 @@ func (c *usersService) Logout(ctx context.Context, in *LogoutRequest, opts ...cl
 	return out, nil
 }
 
-func (c *usersService) Validate(ctx context.Context, in *ValidateRequest, opts ...client.CallOption) (*ValidateResponse, error) {
-	req := c.c.NewRequest(c.name, "Users.Validate", in)
-	out := new(ValidateResponse)
+func (c *usersService) ReadSession(ctx context.Context, in *ReadSessionRequest, opts ...client.CallOption) (*ReadSessionResponse, error) {
+	req := c.c.NewRequest(c.name, "Users.ReadSession", in)
+	out := new(ReadSessionResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -164,29 +160,26 @@ func (c *usersService) Validate(ctx context.Context, in *ValidateRequest, opts .
 type UsersHandler interface {
 	Create(context.Context, *CreateRequest, *CreateResponse) error
 	Read(context.Context, *ReadRequest, *ReadResponse) error
-	ReadByEmail(context.Context, *ReadByEmailRequest, *ReadByEmailResponse) error
 	Update(context.Context, *UpdateRequest, *UpdateResponse) error
 	Delete(context.Context, *DeleteRequest, *DeleteResponse) error
-	List(context.Context, *ListRequest, *ListResponse) error
-	// Login using email and password returns the users profile and a token
+	Search(context.Context, *SearchRequest, *SearchResponse) error
+	UpdatePassword(context.Context, *UpdatePasswordRequest, *UpdatePasswordResponse) error
 	Login(context.Context, *LoginRequest, *LoginResponse) error
-	// Logout expires all tokens for the user
 	Logout(context.Context, *LogoutRequest, *LogoutResponse) error
-	// Validate a token, each time a token is validated it extends its lifetime for another week
-	Validate(context.Context, *ValidateRequest, *ValidateResponse) error
+	ReadSession(context.Context, *ReadSessionRequest, *ReadSessionResponse) error
 }
 
 func RegisterUsersHandler(s server.Server, hdlr UsersHandler, opts ...server.HandlerOption) error {
 	type users interface {
 		Create(ctx context.Context, in *CreateRequest, out *CreateResponse) error
 		Read(ctx context.Context, in *ReadRequest, out *ReadResponse) error
-		ReadByEmail(ctx context.Context, in *ReadByEmailRequest, out *ReadByEmailResponse) error
 		Update(ctx context.Context, in *UpdateRequest, out *UpdateResponse) error
 		Delete(ctx context.Context, in *DeleteRequest, out *DeleteResponse) error
-		List(ctx context.Context, in *ListRequest, out *ListResponse) error
+		Search(ctx context.Context, in *SearchRequest, out *SearchResponse) error
+		UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, out *UpdatePasswordResponse) error
 		Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error
 		Logout(ctx context.Context, in *LogoutRequest, out *LogoutResponse) error
-		Validate(ctx context.Context, in *ValidateRequest, out *ValidateResponse) error
+		ReadSession(ctx context.Context, in *ReadSessionRequest, out *ReadSessionResponse) error
 	}
 	type Users struct {
 		users
@@ -207,10 +200,6 @@ func (h *usersHandler) Read(ctx context.Context, in *ReadRequest, out *ReadRespo
 	return h.UsersHandler.Read(ctx, in, out)
 }
 
-func (h *usersHandler) ReadByEmail(ctx context.Context, in *ReadByEmailRequest, out *ReadByEmailResponse) error {
-	return h.UsersHandler.ReadByEmail(ctx, in, out)
-}
-
 func (h *usersHandler) Update(ctx context.Context, in *UpdateRequest, out *UpdateResponse) error {
 	return h.UsersHandler.Update(ctx, in, out)
 }
@@ -219,8 +208,12 @@ func (h *usersHandler) Delete(ctx context.Context, in *DeleteRequest, out *Delet
 	return h.UsersHandler.Delete(ctx, in, out)
 }
 
-func (h *usersHandler) List(ctx context.Context, in *ListRequest, out *ListResponse) error {
-	return h.UsersHandler.List(ctx, in, out)
+func (h *usersHandler) Search(ctx context.Context, in *SearchRequest, out *SearchResponse) error {
+	return h.UsersHandler.Search(ctx, in, out)
+}
+
+func (h *usersHandler) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, out *UpdatePasswordResponse) error {
+	return h.UsersHandler.UpdatePassword(ctx, in, out)
 }
 
 func (h *usersHandler) Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error {
@@ -231,6 +224,6 @@ func (h *usersHandler) Logout(ctx context.Context, in *LogoutRequest, out *Logou
 	return h.UsersHandler.Logout(ctx, in, out)
 }
 
-func (h *usersHandler) Validate(ctx context.Context, in *ValidateRequest, out *ValidateResponse) error {
-	return h.UsersHandler.Validate(ctx, in, out)
+func (h *usersHandler) ReadSession(ctx context.Context, in *ReadSessionRequest, out *ReadSessionResponse) error {
+	return h.UsersHandler.ReadSession(ctx, in, out)
 }

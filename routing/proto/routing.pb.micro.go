@@ -6,7 +6,6 @@ package routing
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	_ "google.golang.org/protobuf/types/known/wrapperspb"
 	math "math"
 )
 
@@ -43,7 +42,12 @@ func NewRoutingEndpoints() []*api.Endpoint {
 // Client API for Routing service
 
 type RoutingService interface {
+	// Route returns a gps route from origin to destination based on lat/lng
 	Route(ctx context.Context, in *RouteRequest, opts ...client.CallOption) (*RouteResponse, error)
+	// Eta returns an estimated time of arrival for a route
+	Eta(ctx context.Context, in *EtaRequest, opts ...client.CallOption) (*EtaResponse, error)
+	// Directions provides turn by turn directions
+	Directions(ctx context.Context, in *DirectionsRequest, opts ...client.CallOption) (*DirectionsResponse, error)
 }
 
 type routingService struct {
@@ -68,15 +72,42 @@ func (c *routingService) Route(ctx context.Context, in *RouteRequest, opts ...cl
 	return out, nil
 }
 
+func (c *routingService) Eta(ctx context.Context, in *EtaRequest, opts ...client.CallOption) (*EtaResponse, error) {
+	req := c.c.NewRequest(c.name, "Routing.Eta", in)
+	out := new(EtaResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routingService) Directions(ctx context.Context, in *DirectionsRequest, opts ...client.CallOption) (*DirectionsResponse, error) {
+	req := c.c.NewRequest(c.name, "Routing.Directions", in)
+	out := new(DirectionsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Routing service
 
 type RoutingHandler interface {
+	// Route returns a gps route from origin to destination based on lat/lng
 	Route(context.Context, *RouteRequest, *RouteResponse) error
+	// Eta returns an estimated time of arrival for a route
+	Eta(context.Context, *EtaRequest, *EtaResponse) error
+	// Directions provides turn by turn directions
+	Directions(context.Context, *DirectionsRequest, *DirectionsResponse) error
 }
 
 func RegisterRoutingHandler(s server.Server, hdlr RoutingHandler, opts ...server.HandlerOption) error {
 	type routing interface {
 		Route(ctx context.Context, in *RouteRequest, out *RouteResponse) error
+		Eta(ctx context.Context, in *EtaRequest, out *EtaResponse) error
+		Directions(ctx context.Context, in *DirectionsRequest, out *DirectionsResponse) error
 	}
 	type Routing struct {
 		routing
@@ -91,4 +122,12 @@ type routingHandler struct {
 
 func (h *routingHandler) Route(ctx context.Context, in *RouteRequest, out *RouteResponse) error {
 	return h.RoutingHandler.Route(ctx, in, out)
+}
+
+func (h *routingHandler) Eta(ctx context.Context, in *EtaRequest, out *EtaResponse) error {
+	return h.RoutingHandler.Eta(ctx, in, out)
+}
+
+func (h *routingHandler) Directions(ctx context.Context, in *DirectionsRequest, out *DirectionsResponse) error {
+	return h.RoutingHandler.Directions(ctx, in, out)
 }
