@@ -1,0 +1,10 @@
+{
+  "name": "routing",
+  "icon": "🧭",
+  "category": "logistics",
+  "pricing": {
+    "Routing.Route": 10,
+    "Routing.Eta": 10,
+    "Routing.Directions": 10
+  }
+}

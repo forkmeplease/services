@@ -1,0 +1,11 @@
+{
+  "name": "file",
+  "icon": "📁",
+  "category": "storage",
+  "pricing": {
+    "File.List": 1,
+    "File.Read": 1,
+    "File.Save": 1,
+    "File.Delete": 1
+  }
+}

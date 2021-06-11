@@ -1,0 +1,53 @@
+{
+    "save": [{
+        "title": "Save file",
+        "request": {
+            "file": {
+                "content": "file content example",
+                "path": "/document/text-files/file.txt",
+                "project": "examples"
+            }
+        },
+        "response": {
+        }
+    }],
+    "list": [{
+        "title": "List files",
+        "request": {
+            "project": "examples"
+        },
+        "response": {
+            "files": [
+              {
+                "project": "examples",
+                "name": "file.txt",
+                "path": "/document/text-files/file.txt"
+              }
+            ]
+          }
+    }],
+    "delete": [{
+        "title": "Delete file",
+        "request": {
+            "project": "examples",
+            "path": "/document/text-files/file.txt"
+        },
+        "response": {}
+    }],
+    "read": [{
+        "title": "Read file",
+        "request": {
+            "project": "examples",
+            "path": "/document/text-files/file.txt"
+        },
+        "response": {
+            "files": [
+              {
+                "project": "examples",
+                "content": "file content example",
+                "path": "/document/text-files/file.txt"
+              }
+            ]
+          }
+    }]
+}

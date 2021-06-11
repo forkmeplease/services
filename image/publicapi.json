@@ -1,0 +1,10 @@
+{
+  "name": "image",
+  "icon": "🖼️",
+  "category": "web",
+  "pricing": {
+    "Image.Convert": 100,
+    "Image.Resize": 100,
+    "Image.Upload": 100
+  }
+}

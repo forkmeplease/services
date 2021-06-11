@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "./proto;user";
+
+service User {
+	rpc Create(CreateRequest) returns (CreateResponse) {}
+	rpc Read(ReadRequest) returns (ReadResponse) {}
+	rpc Update(UpdateRequest) returns (UpdateResponse) {}
+	rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+	rpc Search(SearchRequest) returns (SearchResponse) {}
+	rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse) {}
+	rpc Login(LoginRequest) returns (LoginResponse) {}
+	rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+	rpc ReadSession(ReadSessionRequest) returns(ReadSessionResponse) {}
+}
+
+message Account {
+	// unique account id
+	string id = 1;
+	// alphanumeric username
+	string username = 2;
+	// an email address
+	string email = 3;
+	// unix timestamp
+	int64 created = 4;
+	// unix timestamp
+	int64 updated = 5;
+}
+
+message Session {
+	// the session id
+	string id = 1;
+	// account username
+	string username = 2;
+	// account email
+	string email = 3;
+	// unix timestamp
+	int64 created = 4;
+	// unix timestamp
+	int64 expires = 5;
+}
+
+// Create a new user account
+message CreateRequest {
+	// the acccount id
+	string id = 1;
+	// the username
+	string username = 2;
+	// the email address
+	string email = 3;
+	// the user password
+	string password = 4;
+}
+
+message CreateResponse {
+}
+
+// Delete an account by id
+message DeleteRequest {
+	// the account id
+	string id = 1;
+}
+
+message DeleteResponse {
+}
+
+// Read an account by id
+message ReadRequest {
+	// the account id
+	string id = 1;
+}
+
+message ReadResponse {
+	Account account = 1;
+}
+
+// Update the account username or email
+message UpdateRequest {
+	// the account id
+	string id = 1;
+	// the new username
+	string username = 2;
+	// the new email address
+	string email = 3;
+}
+
+message UpdateResponse {
+}
+
+// Update the account password
+message UpdatePasswordRequest {
+	// the account id
+	string userId = 1;
+	// the old password
+	string oldPassword = 2;
+	// the new password
+	string newPassword = 3;
+	// confirm new password
+	string confirm_password = 4;
+}
+
+message UpdatePasswordResponse {
+}
+
+// Search for an account
+message SearchRequest {
+	string username = 1; 
+	string email = 2; 
+	int64 limit = 3;
+	int64 offset = 4;
+}
+
+message SearchResponse {
+	repeated Account accounts = 1;
+}
+
+// Read a session by id
+message ReadSessionRequest {
+    string sessionId = 1;
+}
+
+message ReadSessionResponse {
+    Session session = 1;
+}
+
+
+// Login a user account
+message LoginRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message LoginResponse {
+    Session session = 1;
+}
+
+// Logout a user account
+message LogoutRequest {
+    string sessionId = 1;
+}
+
+message LogoutResponse {
+}
+
