@@ -2,10 +2,5 @@
   "name": "db",
   "icon": "📦",
   "category": "storage",
-  "pricing": {
-    "Db.Create": 1,
-    "Db.Read": 1,
-    "Db.Update": 1,
-    "Db.Delete": 1
-  }
+  "display_name": "DB"
 }

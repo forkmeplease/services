@@ -2,9 +2,5 @@
   "name": "url",
   "icon": "🔗",
   "category": "web",
-  "pricing": {
-    "Url.List": 1,
-    "Url.Proxy": 1,
-    "Url.Shorten": 1
-  }
+  "display_name": "URL Shortener"
 }

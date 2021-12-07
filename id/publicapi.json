@@ -1,8 +1,6 @@
 {
   "name": "id",
   "icon": "🆔",
-  "category": "util",
-  "pricing": {
-    "Id.Generate": 1
-  }
+  "category": "web",
+  "display_name": "ID Generator"
 }

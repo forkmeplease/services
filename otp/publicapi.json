@@ -1,9 +1,6 @@
 {
   "name": "otp",
   "icon": "🔑",
-  "category": "user",
-  "pricing": {
-    "Otp.Generate": 1,
-    "Otp.Validate": 1
-  }
+  "category": "authentication",
+  "display_name": "OTP"
 }

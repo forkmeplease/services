@@ -1,8 +1,6 @@
 {
   "name": "ip",
   "icon": "🗺️",
-  "category": "location",
-  "pricing": {
-    "Ip.Lookup": 1
-  }
+  "category": "web",
+  "display_name": "IP to Geo"
 }

@@ -46,11 +46,15 @@ type UserService interface {
 	Read(ctx context.Context, in *ReadRequest, opts ...client.CallOption) (*ReadResponse, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...client.CallOption) (*UpdateResponse, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...client.CallOption) (*DeleteResponse, error)
-	Search(ctx context.Context, in *SearchRequest, opts ...client.CallOption) (*SearchResponse, error)
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...client.CallOption) (*UpdatePasswordResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...client.CallOption) (*LogoutResponse, error)
 	ReadSession(ctx context.Context, in *ReadSessionRequest, opts ...client.CallOption) (*ReadSessionResponse, error)
+	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...client.CallOption) (*VerifyEmailResponse, error)
+	SendVerificationEmail(ctx context.Context, in *SendVerificationEmailRequest, opts ...client.CallOption) (*SendVerificationEmailResponse, error)
+	SendPasswordResetEmail(ctx context.Context, in *SendPasswordResetEmailRequest, opts ...client.CallOption) (*SendPasswordResetEmailResponse, error)
+	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...client.CallOption) (*ResetPasswordResponse, error)
+	List(ctx context.Context, in *ListRequest, opts ...client.CallOption) (*ListResponse, error)
 }
 
 type userService struct {
@@ -105,16 +109,6 @@ func (c *userService) Delete(ctx context.Context, in *DeleteRequest, opts ...cli
 	return out, nil
 }
 
-func (c *userService) Search(ctx context.Context, in *SearchRequest, opts ...client.CallOption) (*SearchResponse, error) {
-	req := c.c.NewRequest(c.name, "User.Search", in)
-	out := new(SearchResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userService) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...client.CallOption) (*UpdatePasswordResponse, error) {
 	req := c.c.NewRequest(c.name, "User.UpdatePassword", in)
 	out := new(UpdatePasswordResponse)
@@ -155,6 +149,56 @@ func (c *userService) ReadSession(ctx context.Context, in *ReadSessionRequest, o
 	return out, nil
 }
 
+func (c *userService) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...client.CallOption) (*VerifyEmailResponse, error) {
+	req := c.c.NewRequest(c.name, "User.VerifyEmail", in)
+	out := new(VerifyEmailResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) SendVerificationEmail(ctx context.Context, in *SendVerificationEmailRequest, opts ...client.CallOption) (*SendVerificationEmailResponse, error) {
+	req := c.c.NewRequest(c.name, "User.SendVerificationEmail", in)
+	out := new(SendVerificationEmailResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) SendPasswordResetEmail(ctx context.Context, in *SendPasswordResetEmailRequest, opts ...client.CallOption) (*SendPasswordResetEmailResponse, error) {
+	req := c.c.NewRequest(c.name, "User.SendPasswordResetEmail", in)
+	out := new(SendPasswordResetEmailResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...client.CallOption) (*ResetPasswordResponse, error) {
+	req := c.c.NewRequest(c.name, "User.ResetPassword", in)
+	out := new(ResetPasswordResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) List(ctx context.Context, in *ListRequest, opts ...client.CallOption) (*ListResponse, error) {
+	req := c.c.NewRequest(c.name, "User.List", in)
+	out := new(ListResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for User service
 
 type UserHandler interface {
@@ -162,11 +206,15 @@ type UserHandler interface {
 	Read(context.Context, *ReadRequest, *ReadResponse) error
 	Update(context.Context, *UpdateRequest, *UpdateResponse) error
 	Delete(context.Context, *DeleteRequest, *DeleteResponse) error
-	Search(context.Context, *SearchRequest, *SearchResponse) error
 	UpdatePassword(context.Context, *UpdatePasswordRequest, *UpdatePasswordResponse) error
 	Login(context.Context, *LoginRequest, *LoginResponse) error
 	Logout(context.Context, *LogoutRequest, *LogoutResponse) error
 	ReadSession(context.Context, *ReadSessionRequest, *ReadSessionResponse) error
+	VerifyEmail(context.Context, *VerifyEmailRequest, *VerifyEmailResponse) error
+	SendVerificationEmail(context.Context, *SendVerificationEmailRequest, *SendVerificationEmailResponse) error
+	SendPasswordResetEmail(context.Context, *SendPasswordResetEmailRequest, *SendPasswordResetEmailResponse) error
+	ResetPassword(context.Context, *ResetPasswordRequest, *ResetPasswordResponse) error
+	List(context.Context, *ListRequest, *ListResponse) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
@@ -175,11 +223,15 @@ func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.Handl
 		Read(ctx context.Context, in *ReadRequest, out *ReadResponse) error
 		Update(ctx context.Context, in *UpdateRequest, out *UpdateResponse) error
 		Delete(ctx context.Context, in *DeleteRequest, out *DeleteResponse) error
-		Search(ctx context.Context, in *SearchRequest, out *SearchResponse) error
 		UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, out *UpdatePasswordResponse) error
 		Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error
 		Logout(ctx context.Context, in *LogoutRequest, out *LogoutResponse) error
 		ReadSession(ctx context.Context, in *ReadSessionRequest, out *ReadSessionResponse) error
+		VerifyEmail(ctx context.Context, in *VerifyEmailRequest, out *VerifyEmailResponse) error
+		SendVerificationEmail(ctx context.Context, in *SendVerificationEmailRequest, out *SendVerificationEmailResponse) error
+		SendPasswordResetEmail(ctx context.Context, in *SendPasswordResetEmailRequest, out *SendPasswordResetEmailResponse) error
+		ResetPassword(ctx context.Context, in *ResetPasswordRequest, out *ResetPasswordResponse) error
+		List(ctx context.Context, in *ListRequest, out *ListResponse) error
 	}
 	type User struct {
 		user
@@ -208,10 +260,6 @@ func (h *userHandler) Delete(ctx context.Context, in *DeleteRequest, out *Delete
 	return h.UserHandler.Delete(ctx, in, out)
 }
 
-func (h *userHandler) Search(ctx context.Context, in *SearchRequest, out *SearchResponse) error {
-	return h.UserHandler.Search(ctx, in, out)
-}
-
 func (h *userHandler) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, out *UpdatePasswordResponse) error {
 	return h.UserHandler.UpdatePassword(ctx, in, out)
 }
@@ -226,4 +274,24 @@ func (h *userHandler) Logout(ctx context.Context, in *LogoutRequest, out *Logout
 
 func (h *userHandler) ReadSession(ctx context.Context, in *ReadSessionRequest, out *ReadSessionResponse) error {
 	return h.UserHandler.ReadSession(ctx, in, out)
+}
+
+func (h *userHandler) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, out *VerifyEmailResponse) error {
+	return h.UserHandler.VerifyEmail(ctx, in, out)
+}
+
+func (h *userHandler) SendVerificationEmail(ctx context.Context, in *SendVerificationEmailRequest, out *SendVerificationEmailResponse) error {
+	return h.UserHandler.SendVerificationEmail(ctx, in, out)
+}
+
+func (h *userHandler) SendPasswordResetEmail(ctx context.Context, in *SendPasswordResetEmailRequest, out *SendPasswordResetEmailResponse) error {
+	return h.UserHandler.SendPasswordResetEmail(ctx, in, out)
+}
+
+func (h *userHandler) ResetPassword(ctx context.Context, in *ResetPasswordRequest, out *ResetPasswordResponse) error {
+	return h.UserHandler.ResetPassword(ctx, in, out)
+}
+
+func (h *userHandler) List(ctx context.Context, in *ListRequest, out *ListResponse) error {
+	return h.UserHandler.List(ctx, in, out)
 }

@@ -29,20 +29,20 @@ A non-comprehensive list of additional high-level value add services:
 - Broadcast
 - Checkout
 - Customer
-- Database
-- Email
-- Event
+- [x] Database
+- [x] Email
+- [x] Event
 - Food (markets)
 - Fraud/Risk
 - Gamify (scores / leaderboard)
-- geocoding
+- [x] geocoding
 - i18n
-- Image
-- Location
+- [x] Image
+- [x] Location
 - Maps
 - Message
 - Monitoring
-- Notes / todo / lists
+- [x] Notes / todo / lists
 - Notification
 - Payment
 - Personalisation
@@ -53,10 +53,10 @@ A non-comprehensive list of additional high-level value add services:
 - Search
 - Secrets
 - Status
-- Stream
+- [x] Stream
 - Support
 - Timeline
 - translation
-- User
+- [x] User
 - Video
 - Voice

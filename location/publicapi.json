@@ -2,9 +2,5 @@
   "name": "location",
   "icon": "🛰️",
   "category": "logistics",
-  "pricing": {
-    "Location.Read": 1,
-    "Location.Save": 1,
-    "Location.Search": 1
-  }
+  "display_name": "Location"
 }
