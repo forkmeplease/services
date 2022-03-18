@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/micro/services/space/handler"
-	pb "github.com/micro/services/space/proto"
 	"github.com/micro/micro/v3/service"
+	"github.com/micro/micro/v3/service/api"
 	"github.com/micro/micro/v3/service/logger"
+	admin "github.com/micro/services/pkg/service/proto"
+	"github.com/micro/services/space/handler"
 )
 
 func main() {
@@ -14,8 +15,20 @@ func main() {
 		service.Version("latest"),
 	)
 
+	h := handler.NewSpace(srv)
 	// Register handler
-	pb.RegisterSpaceHandler(srv.Server(), new(handler.Space))
+	admin.RegisterAdminHandler(srv.Server(), h)
+	srv.Server().Handle(
+		srv.Server().NewHandler(
+			h,
+			api.WithEndpoint(
+				&api.Endpoint{
+					Name:    "Space.Download",
+					Handler: "api",
+					Method:  []string{"POST", "GET"},
+					Path:    []string{"/space/download"},
+				}),
+		))
 
 	// Run service
 	if err := srv.Run(); err != nil {

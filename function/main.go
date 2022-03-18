@@ -1,12 +1,11 @@
 package main
 
 import (
-	db "github.com/micro/services/db/proto"
-	"github.com/micro/services/function/handler"
-	pb "github.com/micro/services/function/proto"
-
 	"github.com/micro/micro/v3/service"
 	"github.com/micro/micro/v3/service/logger"
+	"github.com/micro/services/function/handler"
+	pb "github.com/micro/services/function/proto"
+	admin "github.com/micro/services/pkg/service/proto"
 )
 
 func main() {
@@ -16,8 +15,10 @@ func main() {
 		service.Version("latest"),
 	)
 
+	h := handler.NewFunction()
 	// Register handler
-	pb.RegisterFunctionHandler(srv.Server(), handler.NewFunction(db.NewDbService("db", srv.Client())))
+	pb.RegisterFunctionHandler(srv.Server(), h)
+	admin.RegisterAdminHandler(srv.Server(), h)
 
 	// Run service
 	if err := srv.Run(); err != nil {

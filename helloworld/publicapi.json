@@ -1,6 +1,6 @@
 {
   "name": "helloworld",
   "icon": "👋",
-  "category": "example",
+  "category": "utility",
   "display_name": "Hello World"
 }

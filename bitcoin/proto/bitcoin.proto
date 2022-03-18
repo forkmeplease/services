@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package bitcoin;
+
+option go_package = "./proto;bitcoin";
+
+service Bitcoin {
+	rpc Price(PriceRequest) returns (PriceResponse) {}
+}
+
+// Get the price of bitcoin
+message PriceRequest {
+	// symbol to use e.g BTCUSD
+	string symbol = 1;
+}
+
+message PriceResponse {
+	// The symbol of pricing e.g BTCUSD
+	string symbol = 1;
+	// The price of bitcoin
+	double price = 2;
+}

@@ -1,7 +1,6 @@
-Serverless compute as a service
+Serverless functions
 
 # Function Service
 
-Deploy and run serverless functions for any project from a Git repository.
-
+Deploy and run serverless lambda functions with zero infra management
 

@@ -48,6 +48,12 @@ type FunctionService interface {
 	List(ctx context.Context, in *ListRequest, opts ...client.CallOption) (*ListResponse, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...client.CallOption) (*DeleteResponse, error)
 	Describe(ctx context.Context, in *DescribeRequest, opts ...client.CallOption) (*DescribeResponse, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...client.CallOption) (*UpdateResponse, error)
+	Proxy(ctx context.Context, in *ProxyRequest, opts ...client.CallOption) (*ProxyResponse, error)
+	Regions(ctx context.Context, in *RegionsRequest, opts ...client.CallOption) (*RegionsResponse, error)
+	Reserve(ctx context.Context, in *ReserveRequest, opts ...client.CallOption) (*ReserveResponse, error)
+	Runtimes(ctx context.Context, in *RuntimesRequest, opts ...client.CallOption) (*RuntimesResponse, error)
+	Logs(ctx context.Context, in *LogsRequest, opts ...client.CallOption) (*LogsResponse, error)
 }
 
 type functionService struct {
@@ -112,6 +118,66 @@ func (c *functionService) Describe(ctx context.Context, in *DescribeRequest, opt
 	return out, nil
 }
 
+func (c *functionService) Update(ctx context.Context, in *UpdateRequest, opts ...client.CallOption) (*UpdateResponse, error) {
+	req := c.c.NewRequest(c.name, "Function.Update", in)
+	out := new(UpdateResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *functionService) Proxy(ctx context.Context, in *ProxyRequest, opts ...client.CallOption) (*ProxyResponse, error) {
+	req := c.c.NewRequest(c.name, "Function.Proxy", in)
+	out := new(ProxyResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *functionService) Regions(ctx context.Context, in *RegionsRequest, opts ...client.CallOption) (*RegionsResponse, error) {
+	req := c.c.NewRequest(c.name, "Function.Regions", in)
+	out := new(RegionsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *functionService) Reserve(ctx context.Context, in *ReserveRequest, opts ...client.CallOption) (*ReserveResponse, error) {
+	req := c.c.NewRequest(c.name, "Function.Reserve", in)
+	out := new(ReserveResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *functionService) Runtimes(ctx context.Context, in *RuntimesRequest, opts ...client.CallOption) (*RuntimesResponse, error) {
+	req := c.c.NewRequest(c.name, "Function.Runtimes", in)
+	out := new(RuntimesResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *functionService) Logs(ctx context.Context, in *LogsRequest, opts ...client.CallOption) (*LogsResponse, error) {
+	req := c.c.NewRequest(c.name, "Function.Logs", in)
+	out := new(LogsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Function service
 
 type FunctionHandler interface {
@@ -120,6 +186,12 @@ type FunctionHandler interface {
 	List(context.Context, *ListRequest, *ListResponse) error
 	Delete(context.Context, *DeleteRequest, *DeleteResponse) error
 	Describe(context.Context, *DescribeRequest, *DescribeResponse) error
+	Update(context.Context, *UpdateRequest, *UpdateResponse) error
+	Proxy(context.Context, *ProxyRequest, *ProxyResponse) error
+	Regions(context.Context, *RegionsRequest, *RegionsResponse) error
+	Reserve(context.Context, *ReserveRequest, *ReserveResponse) error
+	Runtimes(context.Context, *RuntimesRequest, *RuntimesResponse) error
+	Logs(context.Context, *LogsRequest, *LogsResponse) error
 }
 
 func RegisterFunctionHandler(s server.Server, hdlr FunctionHandler, opts ...server.HandlerOption) error {
@@ -129,6 +201,12 @@ func RegisterFunctionHandler(s server.Server, hdlr FunctionHandler, opts ...serv
 		List(ctx context.Context, in *ListRequest, out *ListResponse) error
 		Delete(ctx context.Context, in *DeleteRequest, out *DeleteResponse) error
 		Describe(ctx context.Context, in *DescribeRequest, out *DescribeResponse) error
+		Update(ctx context.Context, in *UpdateRequest, out *UpdateResponse) error
+		Proxy(ctx context.Context, in *ProxyRequest, out *ProxyResponse) error
+		Regions(ctx context.Context, in *RegionsRequest, out *RegionsResponse) error
+		Reserve(ctx context.Context, in *ReserveRequest, out *ReserveResponse) error
+		Runtimes(ctx context.Context, in *RuntimesRequest, out *RuntimesResponse) error
+		Logs(ctx context.Context, in *LogsRequest, out *LogsResponse) error
 	}
 	type Function struct {
 		function
@@ -159,4 +237,28 @@ func (h *functionHandler) Delete(ctx context.Context, in *DeleteRequest, out *De
 
 func (h *functionHandler) Describe(ctx context.Context, in *DescribeRequest, out *DescribeResponse) error {
 	return h.FunctionHandler.Describe(ctx, in, out)
+}
+
+func (h *functionHandler) Update(ctx context.Context, in *UpdateRequest, out *UpdateResponse) error {
+	return h.FunctionHandler.Update(ctx, in, out)
+}
+
+func (h *functionHandler) Proxy(ctx context.Context, in *ProxyRequest, out *ProxyResponse) error {
+	return h.FunctionHandler.Proxy(ctx, in, out)
+}
+
+func (h *functionHandler) Regions(ctx context.Context, in *RegionsRequest, out *RegionsResponse) error {
+	return h.FunctionHandler.Regions(ctx, in, out)
+}
+
+func (h *functionHandler) Reserve(ctx context.Context, in *ReserveRequest, out *ReserveResponse) error {
+	return h.FunctionHandler.Reserve(ctx, in, out)
+}
+
+func (h *functionHandler) Runtimes(ctx context.Context, in *RuntimesRequest, out *RuntimesResponse) error {
+	return h.FunctionHandler.Runtimes(ctx, in, out)
+}
+
+func (h *functionHandler) Logs(ctx context.Context, in *LogsRequest, out *LogsResponse) error {
+	return h.FunctionHandler.Logs(ctx, in, out)
 }

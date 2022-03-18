@@ -49,12 +49,15 @@ type UserService interface {
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...client.CallOption) (*UpdatePasswordResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...client.CallOption) (*LogoutResponse, error)
+	LogoutAll(ctx context.Context, in *LogoutAllRequest, opts ...client.CallOption) (*LogoutAllResponse, error)
 	ReadSession(ctx context.Context, in *ReadSessionRequest, opts ...client.CallOption) (*ReadSessionResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...client.CallOption) (*VerifyEmailResponse, error)
 	SendVerificationEmail(ctx context.Context, in *SendVerificationEmailRequest, opts ...client.CallOption) (*SendVerificationEmailResponse, error)
 	SendPasswordResetEmail(ctx context.Context, in *SendPasswordResetEmailRequest, opts ...client.CallOption) (*SendPasswordResetEmailResponse, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...client.CallOption) (*ResetPasswordResponse, error)
 	List(ctx context.Context, in *ListRequest, opts ...client.CallOption) (*ListResponse, error)
+	SendMagicLink(ctx context.Context, in *SendMagicLinkRequest, opts ...client.CallOption) (*SendMagicLinkResponse, error)
+	VerifyToken(ctx context.Context, in *VerifyTokenRequest, opts ...client.CallOption) (*VerifyTokenResponse, error)
 }
 
 type userService struct {
@@ -139,6 +142,16 @@ func (c *userService) Logout(ctx context.Context, in *LogoutRequest, opts ...cli
 	return out, nil
 }
 
+func (c *userService) LogoutAll(ctx context.Context, in *LogoutAllRequest, opts ...client.CallOption) (*LogoutAllResponse, error) {
+	req := c.c.NewRequest(c.name, "User.LogoutAll", in)
+	out := new(LogoutAllResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userService) ReadSession(ctx context.Context, in *ReadSessionRequest, opts ...client.CallOption) (*ReadSessionResponse, error) {
 	req := c.c.NewRequest(c.name, "User.ReadSession", in)
 	out := new(ReadSessionResponse)
@@ -199,6 +212,26 @@ func (c *userService) List(ctx context.Context, in *ListRequest, opts ...client.
 	return out, nil
 }
 
+func (c *userService) SendMagicLink(ctx context.Context, in *SendMagicLinkRequest, opts ...client.CallOption) (*SendMagicLinkResponse, error) {
+	req := c.c.NewRequest(c.name, "User.SendMagicLink", in)
+	out := new(SendMagicLinkResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) VerifyToken(ctx context.Context, in *VerifyTokenRequest, opts ...client.CallOption) (*VerifyTokenResponse, error) {
+	req := c.c.NewRequest(c.name, "User.VerifyToken", in)
+	out := new(VerifyTokenResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for User service
 
 type UserHandler interface {
@@ -209,12 +242,15 @@ type UserHandler interface {
 	UpdatePassword(context.Context, *UpdatePasswordRequest, *UpdatePasswordResponse) error
 	Login(context.Context, *LoginRequest, *LoginResponse) error
 	Logout(context.Context, *LogoutRequest, *LogoutResponse) error
+	LogoutAll(context.Context, *LogoutAllRequest, *LogoutAllResponse) error
 	ReadSession(context.Context, *ReadSessionRequest, *ReadSessionResponse) error
 	VerifyEmail(context.Context, *VerifyEmailRequest, *VerifyEmailResponse) error
 	SendVerificationEmail(context.Context, *SendVerificationEmailRequest, *SendVerificationEmailResponse) error
 	SendPasswordResetEmail(context.Context, *SendPasswordResetEmailRequest, *SendPasswordResetEmailResponse) error
 	ResetPassword(context.Context, *ResetPasswordRequest, *ResetPasswordResponse) error
 	List(context.Context, *ListRequest, *ListResponse) error
+	SendMagicLink(context.Context, *SendMagicLinkRequest, *SendMagicLinkResponse) error
+	VerifyToken(context.Context, *VerifyTokenRequest, *VerifyTokenResponse) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
@@ -226,12 +262,15 @@ func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.Handl
 		UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, out *UpdatePasswordResponse) error
 		Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error
 		Logout(ctx context.Context, in *LogoutRequest, out *LogoutResponse) error
+		LogoutAll(ctx context.Context, in *LogoutAllRequest, out *LogoutAllResponse) error
 		ReadSession(ctx context.Context, in *ReadSessionRequest, out *ReadSessionResponse) error
 		VerifyEmail(ctx context.Context, in *VerifyEmailRequest, out *VerifyEmailResponse) error
 		SendVerificationEmail(ctx context.Context, in *SendVerificationEmailRequest, out *SendVerificationEmailResponse) error
 		SendPasswordResetEmail(ctx context.Context, in *SendPasswordResetEmailRequest, out *SendPasswordResetEmailResponse) error
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, out *ResetPasswordResponse) error
 		List(ctx context.Context, in *ListRequest, out *ListResponse) error
+		SendMagicLink(ctx context.Context, in *SendMagicLinkRequest, out *SendMagicLinkResponse) error
+		VerifyToken(ctx context.Context, in *VerifyTokenRequest, out *VerifyTokenResponse) error
 	}
 	type User struct {
 		user
@@ -272,6 +311,10 @@ func (h *userHandler) Logout(ctx context.Context, in *LogoutRequest, out *Logout
 	return h.UserHandler.Logout(ctx, in, out)
 }
 
+func (h *userHandler) LogoutAll(ctx context.Context, in *LogoutAllRequest, out *LogoutAllResponse) error {
+	return h.UserHandler.LogoutAll(ctx, in, out)
+}
+
 func (h *userHandler) ReadSession(ctx context.Context, in *ReadSessionRequest, out *ReadSessionResponse) error {
 	return h.UserHandler.ReadSession(ctx, in, out)
 }
@@ -294,4 +337,12 @@ func (h *userHandler) ResetPassword(ctx context.Context, in *ResetPasswordReques
 
 func (h *userHandler) List(ctx context.Context, in *ListRequest, out *ListResponse) error {
 	return h.UserHandler.List(ctx, in, out)
+}
+
+func (h *userHandler) SendMagicLink(ctx context.Context, in *SendMagicLinkRequest, out *SendMagicLinkResponse) error {
+	return h.UserHandler.SendMagicLink(ctx, in, out)
+}
+
+func (h *userHandler) VerifyToken(ctx context.Context, in *VerifyTokenRequest, out *VerifyTokenResponse) error {
+	return h.UserHandler.VerifyToken(ctx, in, out)
 }

@@ -1,4 +1,4 @@
-Simple in-memory message broker
+PubSub messaging
 
 # MQ Service
 

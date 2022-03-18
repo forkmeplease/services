@@ -18,7 +18,8 @@
       "run_check": false,
       "request": {
         "id": "user-1",
-        "email": "joe+2@example.com"
+        "email": "joe+2@example.com",
+        "username": "joe"
       },
       "response": {}
     }
@@ -28,7 +29,7 @@
       "title": "Update the account password",
       "run_check": false,
       "request": {
-        "id": "user-1",
+        "userId": "user-1",
         "oldPassword": "Password1",
         "newPassword": "Password2",
         "confirmPassword": "Password2"
@@ -224,6 +225,51 @@
             "profile": {}
           }
         ]
+      }
+    }
+  ],
+  "sendMagicLink": [
+    {
+      "title": "Send a Magic Link",
+      "run_check": false,
+      "request": {
+        "email": "joe@example.com",
+        "subject": "MagicLink to access your account",
+        "textContent": "Hi there,\n\nClick here to access your account $micro_verification_link",
+        "fromName": "Awesome Dot Com",
+        "address": "www.example.com",
+        "endpoint": "verifytoken"
+      },
+      "response": {}
+    }
+  ],
+  "verifyToken": [
+    {
+      "title": "Verify a Token",
+      "run_check": false,
+      "request": {
+        "token": "EdsUiidouJJJLldjlloofUiorkojflsWWdld"
+      },
+      "response": {
+        "is_valid": true,
+        "message": "",
+        "session": {
+          "id": "df91a612-5b24-4634-99ff-240220ab8f55",
+          "created": "1623677579",
+          "expires": "1623699579",
+          "userId": "8b98acbe-0b6a-4d66-a414-5ffbf666786f"
+        }
+      }
+    }
+  ],
+  "logoutAll": [
+    {
+      "title": "Logout all sessions for a user",
+      "run_check": false,
+      "request": {
+        "user_id": "user-1"
+      },
+      "response": {
       }
     }
   ]
