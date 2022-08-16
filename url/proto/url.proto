@@ -5,12 +5,38 @@ package url;
 option go_package = "./proto;url";
 
 service Url {
+	rpc Create(CreateRequest) returns (CreateResponse) {}
 	rpc Shorten(ShortenRequest) returns (ShortenResponse) {}
 	rpc List(ListRequest) returns (ListResponse) {}
-	rpc Proxy(ProxyRequest) returns (ProxyResponse) {}
+	rpc Resolve(ResolveRequest) returns (ResolveResponse) {}
+	rpc Update(UpdateRequest) returns (UpdateResponse) {}
+	rpc Delete(DeleteRequest) returns (DeleteResponse) {}
 }
 
-// Shorten a long URL
+// Create a URL
+message CreateRequest {
+	// a unique id e.g uuid or my-url
+	string id = 1;
+	// destination url
+	string destinationURL = 2;
+}
+
+message CreateResponse {
+	URLPair url = 1;
+}
+
+// Delete a URL
+message DeleteRequest {
+	// delete by id
+	string id = 1;
+	// delete by shortURL
+	string shortURL = 2;
+}
+
+message DeleteResponse {
+}
+
+// Shorten a URL
 message ShortenRequest {
 	// the url to shorten
 	string destinationURL = 1;
@@ -22,10 +48,12 @@ message ShortenResponse {
 }
 
 message URLPair {
+	// url id
+	string id = 1;
 	// destination url
-	string destinationURL = 1;
+	string destinationURL = 2;
 	// shortened url
-	string shortURL = 2;
+	string shortURL = 3;
 	// time of creation
 	string created = 4;
 	// The number of times the short URL has been resolved
@@ -42,13 +70,24 @@ message ListResponse {
 	repeated URLPair urlPairs = 1;
 }
 
-// Proxy returns the destination URL of a short URL.
-message ProxyRequest {
-	// short url ID, without the domain, eg. if your short URL is
-	// `m3o.one/u/someshorturlid` then pass in `someshorturlid`
+// Update the destination for a short URL
+message UpdateRequest {
+	// update by id
+	string id = 1;
+	// update by short url
+	string shortURL = 2;
+	// the destination to update to
+	string destinationURL = 3;
+}
+
+message UpdateResponse {}
+
+// Resolve returns the destination URL of a short URL.
+message ResolveRequest {
+	// short url to resolve
 	string shortURL = 1;
 }
 
-message ProxyResponse {
+message ResolveResponse {
 	string destinationURL = 1;
 }

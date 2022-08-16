@@ -16,13 +16,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/micro/micro/v3/service"
+	"github.com/micro/micro/v3/service/client"
 	"github.com/micro/micro/v3/service/config"
 	"github.com/micro/micro/v3/service/errors"
 	log "github.com/micro/micro/v3/service/logger"
-	"github.com/micro/micro/v3/service/runtime/source/git"
 	"github.com/micro/micro/v3/service/store"
 	function "github.com/micro/services/function/proto"
+	github "github.com/micro/services/github/proto"
 	pauth "github.com/micro/services/pkg/auth"
+	"github.com/micro/services/pkg/git"
 	adminpb "github.com/micro/services/pkg/service/proto"
 	"github.com/micro/services/pkg/tenant"
 	"github.com/teris-io/shortid"
@@ -44,6 +47,8 @@ type GoogleFunction struct {
 	domain string
 
 	*Function
+
+	ghSvc github.GithubService
 }
 
 var (
@@ -105,7 +110,7 @@ func random(i int) string {
 	return fmt.Sprintf("%d", time.Now().Unix())
 }
 
-func NewFunction() *GoogleFunction {
+func NewFunction(svc *service.Service) *GoogleFunction {
 	v, err := config.Get("function.service_account_json")
 	if err != nil {
 		log.Fatalf("function.service_account_json: %v", err)
@@ -191,6 +196,7 @@ func NewFunction() *GoogleFunction {
 		identity: identity,
 		domain:   domain,
 		Function: new(Function),
+		ghSvc:    github.NewGithubService("github", svc.Client()),
 	}
 }
 
@@ -213,6 +219,9 @@ func (e *GoogleFunction) Deploy(ctx context.Context, req *function.DeployRequest
 	if len(req.Runtime) == 0 {
 		return errors.BadRequest("function.deploy", "invalid runtime")
 	}
+
+	// lowercase the name
+	req.Name = strings.ToLower(req.Name)
 
 	var match bool
 	for _, r := range GoogleRuntimes {
@@ -255,6 +264,10 @@ func (e *GoogleFunction) Deploy(ctx context.Context, req *function.DeployRequest
 	if !NameFormat.MatchString(req.Name) {
 		return errors.BadRequest("function.deploy", "Invalid name")
 	}
+	tenantId, ok := tenant.FromContext(ctx)
+	if !ok {
+		tenantId = "micro"
+	}
 
 	var sourceDir string
 
@@ -272,7 +285,7 @@ func (e *GoogleFunction) Deploy(ctx context.Context, req *function.DeployRequest
 		sourceDir = dir
 	} else {
 		// checkout from github
-		gitter := git.NewGitter(map[string]string{})
+		gitter := git.NewGitter(e.gitCreds(ctx, tenantId))
 
 		var err error
 
@@ -283,13 +296,8 @@ func (e *GoogleFunction) Deploy(ctx context.Context, req *function.DeployRequest
 		sourceDir = filepath.Join(gitter.RepoDir(), req.Subfolder)
 	}
 
-	tenantId, ok := tenant.FromContext(ctx)
-	if !ok {
-		tenantId = "micro"
-	}
-
 	if req.Entrypoint == "" {
-		req.Entrypoint = req.Name
+		req.Entrypoint = strings.ToTitle(req.Name)
 	}
 
 	// read the function by owner
@@ -505,6 +513,15 @@ func (e *GoogleFunction) Deploy(ctx context.Context, req *function.DeployRequest
 	return nil
 }
 
+func (e *GoogleFunction) gitCreds(ctx context.Context, tenantID string) map[string]string {
+	creds := map[string]string{}
+	tokRsp, _ := e.ghSvc.Token(ctx, &github.TokenRequest{TenantId: tenantID}, client.WithAuthToken())
+	if tokRsp != nil {
+		creds[git.CredentialsKey] = tokRsp.Token
+	}
+	return creds
+}
+
 func (e *GoogleFunction) Update(ctx context.Context, req *function.UpdateRequest, rsp *function.UpdateResponse) error {
 	log.Info("Received Function.Update request")
 
@@ -558,7 +575,7 @@ func (e *GoogleFunction) Update(ctx context.Context, req *function.UpdateRequest
 		fn.Source = req.Source
 	} else {
 		// checkout from github
-		gitter := git.NewGitter(map[string]string{})
+		gitter := git.NewGitter(e.gitCreds(ctx, tenantId))
 		if err := gitter.Checkout(fn.Repo, fn.Branch); err != nil {
 			return errors.InternalServerError("function.update", err.Error())
 		}
@@ -999,6 +1016,10 @@ func (e *GoogleFunction) DeleteData(ctx context.Context, request *adminpb.Delete
 		e.deleteFunction(&fn, rec.Key)
 	}
 	log.Infof("Deleted %d functions for %s", len(recs), request.TenantId)
+	return nil
+}
+
+func (e *GoogleFunction) Usage(ctx context.Context, request *adminpb.UsageRequest, response *adminpb.UsageResponse) error {
 	return nil
 }
 

@@ -5,16 +5,16 @@
         "description": "Create a simple text based list",
         "run_check": false,
         "request": {
-            "title": "New List",
-            "text": "This is my list"
+            "name": "New List",
+            "items": ["This is my list"]
         },
         "response": {
             "list": {
                 "id": "63c0cdf8-2121-11ec-a881-0242e36f037a",
                 "created": "2021-09-29T13:33:03+01:00",
                 "updated": "2021-09-29T13:33:03+01:00",
-                "title": "New List",
-                "text": "This is my list"
+                "name": "New List",
+                "items": ["This is my list"]
             }
         }
     }],
@@ -30,8 +30,8 @@
                 "id": "63c0cdf8-2121-11ec-a881-0242e36f037a",
                 "created": "2021-09-29T13:33:03+01:00",
                 "updated": "2021-09-29T13:33:03+01:00",
-                "title": "New List",
-                "text": "This is my list"
+                "name": "New List",
+                "items": ["This is my list"]
             }
         }
     }],
@@ -43,11 +43,11 @@
         "response": {
             "lists": [
                 {
-                        "id": "63c0cdf8-2121-11ec-a881-0242e36f037a",
-                        "created": "2021-09-29T13:33:03+01:00",
-                        "updated": "2021-09-29T13:33:03+01:00",
-                        "title": "New List",
-                        "text": "This is my list"
+                    "id": "63c0cdf8-2121-11ec-a881-0242e36f037a",
+                    "created": "2021-09-29T13:33:03+01:00",
+                    "updated": "2021-09-29T13:33:03+01:00",
+                    "name": "New List",
+                    "items": ["This is my list"]
                 }
             ]
         }
@@ -59,8 +59,8 @@
         "request": {
 	    "list": {
                 "id": "63c0cdf8-2121-11ec-a881-0242e36f037a",
-                "title": "Update List",
-                "text": "Updated list text"
+                "name": "Update List",
+                "items": ["Updated list text"]
             }
         },
         "response": {
@@ -68,8 +68,8 @@
                 "id": "63c0cdf8-2121-11ec-a881-0242e36f037a",
                 "created": "2021-09-29T13:33:03+01:00",
                 "updated": "2021-09-29T13:50:20+01:00",
-                "title": "Update List",
-                "text": "Updated list text"
+                "name": "Update List",
+                "items": ["Updated list text"]
             }
         }
     }],
@@ -85,8 +85,8 @@
                 "id": "63c0cdf8-2121-11ec-a881-0242e36f037a",
                 "created": "2021-09-29T13:33:03+01:00",
                 "updated": "2021-09-29T13:50:20+01:00",
-                "title": "Update List",
-                "text": "Updated list text"
+                "name": "Update List",
+                "items": ["Updated list text"]
             }
         }
     }],
@@ -103,8 +103,8 @@
                 "id": "63c0cdf8-2121-11ec-a881-0242e36f037a",
                 "created": "2021-09-29T13:33:03+01:00",
                 "updated": "2021-09-29T13:50:20+01:00",
-                "title": "Update List",
-                "text": "Updated list text"
+                "name": "Update List",
+                "items": ["Updated list text"]
             }
         }
     }]

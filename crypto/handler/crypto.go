@@ -118,6 +118,7 @@ func (c *Crypto) News(ctx context.Context, req *pb.NewsRequest, rsp *pb.NewsResp
 		return errors.InternalServerError("crypto.news", "failed to get news")
 	}
 
+	rsp.Symbol = req.Symbol
 	for _, article := range respBody.News {
 		rsp.Articles = append(rsp.Articles, &pb.Article{
 			Title:       article.Title,
@@ -217,6 +218,14 @@ func (c *Crypto) Price(ctx context.Context, req *pb.PriceRequest, rsp *pb.PriceR
 		return errors.BadRequest("crypto.price", "invalid symbol")
 	}
 
+	// check the cache
+	cached, ok := c.Cache.Get("prices:" + req.Symbol)
+	if ok {
+		rsp.Symbol = req.Symbol
+		rsp.Price, _ = cached.(float64)
+		return nil
+	}
+
 	uri := fmt.Sprintf("%slast/crypto/%s?apikey=%s", c.Api, req.Symbol, c.Key)
 
 	resp, err := http.Get(uri)
@@ -242,6 +251,9 @@ func (c *Crypto) Price(ctx context.Context, req *pb.PriceRequest, rsp *pb.PriceR
 
 	rsp.Symbol = req.Symbol
 	rsp.Price = respBody["price"].(float64)
+
+	// set the cache
+	c.Cache.Set("prices:"+req.Symbol, rsp.Price, time.Minute*5)
 
 	return nil
 }

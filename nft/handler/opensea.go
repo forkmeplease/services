@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/micro/micro/v3/service/config"
 	"github.com/micro/micro/v3/service/errors"
@@ -37,6 +38,8 @@ func New() *OpenSea {
 
 	// set the api key
 	api.SetKey("X-API-KEY", key)
+	// set the cache
+	api.SetCache(true, time.Minute*5)
 
 	return &OpenSea{
 		apiKey: key,
@@ -79,6 +82,10 @@ func (o *OpenSea) Assets(ctx context.Context, req *pb.AssetsRequest, rsp *pb.Ass
 		params += "&collection=" + req.Collection
 	}
 
+	if len(req.Owner) > 0 {
+		params += "&owner=" + req.Owner
+	}
+
 	var resp domain.AssetsResponse
 
 	if err := api.Get(uri+params, &resp); err != nil {
@@ -86,6 +93,14 @@ func (o *OpenSea) Assets(ctx context.Context, req *pb.AssetsRequest, rsp *pb.Ass
 	}
 
 	for _, asset := range resp.Assets {
+		// check description length
+		if len(asset.Description) > 2048 {
+			asset.Description = asset.Description[:2048]
+		}
+
+		if asset.Collection != nil && len(asset.Collection.Description) > 2048 {
+			asset.Collection.Description = asset.Collection.Description[:2048]
+		}
 		rsp.Assets = append(rsp.Assets, assetToPb(asset))
 	}
 	rsp.Next = resp.Next
@@ -295,6 +310,10 @@ func (o *OpenSea) Collections(ctx context.Context, req *pb.CollectionsRequest, r
 	}
 
 	params += fmt.Sprintf("limit=%d&offset=%d", limit, offset)
+
+	if len(req.Owner) > 0 {
+		params += "&asset_owner=" + req.Owner
+	}
 
 	var resp domain.CollectionsResponse
 

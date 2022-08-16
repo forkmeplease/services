@@ -40,16 +40,16 @@ type File struct {
 }
 
 func (e *File) Delete(ctx context.Context, req *file.DeleteRequest, rsp *file.DeleteResponse) error {
-	if len(req.Path) == 0 {
-		return errors.BadRequest("file.read", "missing file path")
-	}
-
 	tenantId, ok := tenant.FromContext(ctx)
 	if !ok {
 		tenantId = "micro"
 	}
 
 	path := filepath.Join("file", tenantId, req.Project, req.Path)
+
+	if len(req.Project) == 0 && len(req.Path) == 0 {
+		return errors.BadRequest("file.delete", "missing path and project")
+	}
 
 	// delete one file
 	if !strings.HasSuffix(req.Path, "/") {
@@ -131,6 +131,10 @@ func (e *File) Save(ctx context.Context, req *file.SaveRequest, rsp *file.SaveRe
 
 	if req.File == nil {
 		return errors.BadRequest("file.save", "missing file")
+	}
+
+	if len(req.File.Path) == 0 {
+		return errors.BadRequest("file.save", "missing file path")
 	}
 
 	log.Info("Received File.Save request")
@@ -230,5 +234,9 @@ func (e *File) DeleteData(ctx context.Context, request *adminpb.DeleteDataReques
 	}
 	log.Infof("Deleted %d records for %s", len(records), request.TenantId)
 
+	return nil
+}
+
+func (e *File) Usage(ctx context.Context, request *adminpb.UsageRequest, response *adminpb.UsageResponse) error {
 	return nil
 }

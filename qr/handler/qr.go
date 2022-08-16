@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -97,6 +98,34 @@ func (q *Qr) Generate(ctx context.Context, request *qr.GenerateRequest, response
 	return nil
 }
 
+func (q *Qr) Codes(ctx context.Context, req *qr.CodesRequest, rsp *qr.CodesResponse) error {
+	ten, ok := tenant.FromContext(ctx)
+	if !ok {
+		log.Errorf("Error retrieving tenant")
+		return errors.Unauthorized("qr.codes", "Unauthorized")
+	}
+
+	nsPrefix := namespacePrefix(ten)
+	recs, err := store.Read(fmt.Sprintf("%s/%s/", prefixByTenant, nsPrefix), store.ReadPrefix())
+	if err != nil {
+		return errors.InternalServerError("qr.codes", "Failed to read codes")
+	}
+
+	for _, rec := range recs {
+		code := new(QrCode)
+		rec.Decode(&code)
+
+		rsp.Codes = append(rsp.Codes, &qr.Code{
+			Id:      strings.TrimSuffix(code.Filename, ".png"),
+			Text:    code.Text,
+			File:    fmt.Sprintf("%s/%s/%s", q.cdnPrefix, nsPrefix, code.Filename),
+			Created: time.Unix(code.Created, 0).Format(time.RFC3339Nano),
+		})
+	}
+
+	return nil
+}
+
 func (q *Qr) DeleteData(ctx context.Context, request *adminpb.DeleteDataRequest, response *adminpb.DeleteDataResponse) error {
 	method := "admin.DeleteData"
 	_, err := pauth.VerifyMicroAdmin(ctx, method)
@@ -133,5 +162,9 @@ func (q *Qr) DeleteData(ctx context.Context, request *adminpb.DeleteDataRequest,
 
 	log.Infof("Deleted %d objects from store for %s", len(keys), request.TenantId)
 
+	return nil
+}
+
+func (q *Qr) Usage(ctx context.Context, request *adminpb.UsageRequest, response *adminpb.UsageResponse) error {
 	return nil
 }
