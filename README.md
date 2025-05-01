@@ -88,7 +88,7 @@ Services available thus far:
 
 ## Usage
 
-Micro Services depend on [Micro](https://github.com/micro/micro)
+Micro Services depend on [Micro](https://github.com/micro/micro) V3
 
 ### Run Micro
 
@@ -119,29 +119,3 @@ Call it through the API
 ```
 curl "http://localhost:8080/helloworld/Call?name=Alice"
 ```
-
-From the command line
-
-```
-micro helloworld call --name=Alice
-```
-
-Browse to
-
-```
-http://localhost:8082/helloworld/Call
-```
-
-## Contribute
-
-We welcome contributions of additional services:
-
-- Services must be built using the Micro platform
-- Any dependency must be configured using the Micro Config
-- All services must include a README.md and be well commented
-
-## Config
-
-Config for each service should be stored under the service key by name
-
-E.g db postgres host address `db.address`
