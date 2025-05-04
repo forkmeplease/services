@@ -1,10 +1,10 @@
-# Micro Services [![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/micro/services?tab=doc) [![License](https://img.shields.io/:license-apache-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+# M3O Services
 
-Real world Micro services
+Services for the M3O platform 
 
 ## Overview
 
-Micro services provide the fundamental building blocks for any products, apps or services. They can be used in isolation 
+M3O services provide the fundamental building blocks for any products, apps or services. They can be used in isolation 
 or combined to create powerful distributed systems. The services are intended to be consumed by each other using RPC 
 and externally through the Micro API.
 
@@ -103,16 +103,10 @@ micro server
 Run a service from source
 
 ```
-micro run github.com/micro/services/helloworld
+micro run github.com/micro/m3o/helloworld
 ```
 
 ### Call a Service
-
-To call a service from another
-
-```go
-import "github.com/micro/services/helloworld/proto"
-```
 
 Call it through the API
 
