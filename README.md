@@ -1,10 +1,10 @@
-# M3O Services
+# M3O 
 
-Services for the M3O platform 
+A Go microservices platform
 
 ## Overview
 
-M3O services provide the fundamental building blocks for any products, apps or services. They can be used in isolation 
+M3O provides the fundamental building blocks for any product, app or service. M3O services can be used in isolation 
 or combined to create powerful distributed systems. The services are intended to be consumed by each other using RPC 
 and externally through the Micro API.
 
