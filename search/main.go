@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/logger"
-	admin "github.com/micro/services/pkg/service/proto"
-	"github.com/micro/services/search/handler"
-	pb "github.com/micro/services/search/proto"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
+	admin "m3o.com/pkg/service/proto"
+	"m3o.com/search/handler"
+	pb "m3o.com/search/proto"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 		service.Version("latest"),
 	)
 
-	h := handler.New(srv)
+	h := handler.New()
 	// Register handler
 	pb.RegisterSearchHandler(srv.Server(), h)
 	admin.RegisterAdminHandler(srv.Server(), h)

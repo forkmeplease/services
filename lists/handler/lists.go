@@ -7,16 +7,16 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/micro/micro/v5/service/client"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	pb "github.com/micro/services/lists/proto"
-	streamPb "github.com/micro/services/mq/proto"
-	pauth "github.com/micro/services/pkg/auth"
-	adminpb "github.com/micro/services/pkg/service/proto"
-	"github.com/micro/services/pkg/tenant"
+	"go-micro.dev/v5/client"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
 	"google.golang.org/protobuf/types/known/structpb"
+	pb "m3o.com/lists/proto"
+	streamPb "m3o.com/mq/proto"
+	pauth "m3o.com/pkg/auth"
+	adminpb "m3o.com/pkg/service/proto"
+	"m3o.com/pkg/tenant"
 )
 
 // New returns an initialized Lists

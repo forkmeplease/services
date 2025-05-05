@@ -3,13 +3,13 @@ package main
 import (
 	"time"
 
-	"github.com/micro/services/stock/handler"
-	pb "github.com/micro/services/stock/proto"
+	"m3o.com/stock/handler"
+	pb "m3o.com/stock/proto"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/logger"
 	"github.com/patrickmn/go-cache"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
 )
 
 func main() {

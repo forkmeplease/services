@@ -7,13 +7,13 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	log "github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	log "go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
 
-	pb "github.com/micro/services/holidays/proto"
+	pb "m3o.com/holidays/proto"
 )
 
 type Holidays struct {

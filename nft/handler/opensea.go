@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/services/nft/domain"
-	pb "github.com/micro/services/nft/proto"
-	"github.com/micro/services/pkg/api"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
 	"google.golang.org/protobuf/types/known/structpb"
+	"m3o.com/nft/domain"
+	pb "m3o.com/nft/proto"
+	"m3o.com/pkg/api"
 )
 
 // OpenSea handler

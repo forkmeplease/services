@@ -9,13 +9,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/errors"
-	log "github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	"github.com/micro/services/pkg/redis"
-	"github.com/micro/services/pkg/tenant"
-	pb "github.com/micro/services/wallet/proto"
+	"go-micro.dev/v5/errors"
+	log "go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	"m3o.com/pkg/redis"
+	"m3o.com/pkg/tenant"
+	pb "m3o.com/wallet/proto"
 )
 
 const (
@@ -69,7 +68,7 @@ func storeTransaction(userID string, delta int64, walletID, reference string, vi
 	return rec, nil
 }
 
-func NewHandler(svc *service.Service) *Wallet {
+func NewHandler() *Wallet {
 	return &Wallet{
 		c: redis.NewCounter(counterPrefix),
 	}

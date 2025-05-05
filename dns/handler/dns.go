@@ -7,8 +7,8 @@ import (
 	"github.com/likexian/doh-go/dns"
 	"github.com/likexian/whois"
 	"github.com/likexian/whois-parser"
-	"github.com/micro/micro/v5/service/errors"
-	pb "github.com/micro/services/dns/proto"
+	"go-micro.dev/v5/errors"
+	pb "m3o.com/dns/proto"
 )
 
 type Dns struct{}

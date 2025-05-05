@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/micro/micro/v5/service/auth"
+	"go-micro.dev/v5/auth"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"

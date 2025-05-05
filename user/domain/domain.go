@@ -11,13 +11,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/micro/micro/v5/service/config"
-	microerr "github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
+	"go-micro.dev/v5/config"
+	microerr "go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
 
-	"github.com/micro/services/pkg/cache"
-	user "github.com/micro/services/user/proto"
+	"m3o.com/pkg/cache"
+	user "m3o.com/user/proto"
 
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"

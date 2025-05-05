@@ -8,12 +8,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/micro/micro/v5/service/config"
-	merrors "github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	"github.com/micro/services/pkg/tenant"
-	pb "github.com/micro/services/secret/proto"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/config/reader/json"
+	merrors "go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	"m3o.com/pkg/tenant"
+	pb "m3o.com/secret/proto"
 )
 
 const (
@@ -98,8 +99,9 @@ func (s *Secret) Get(ctx context.Context, req *pb.GetRequest, rsp *pb.GetRespons
 	// check path
 	if len(req.Path) > 0 {
 		path := strings.Replace(req.Path, "/", ".", -1)
-		vals := config.NewJSONValues([]byte(decrypted))
-		val = vals.Get(path).Bytes()
+		vals, _ := json.NewValues([]byte(decrypted))
+		vg, _ := vals.Get(path)
+		val = vg.Bytes()
 	} else {
 		// take whole value
 		val = []byte(decrypted)
@@ -161,7 +163,7 @@ func (s *Secret) Set(ctx context.Context, req *pb.SetRequest, rsp *pb.SetRespons
 	// there is a path to deal with
 	if len(req.Path) > 0 {
 		path := strings.Replace(req.Path, "/", ".", -1)
-		vals := config.NewJSONValues(data)
+		vals, _ := json.NewValues(data)
 		vals.Set(path, req.Value)
 		data = vals.Bytes()
 	} else {
@@ -227,8 +229,8 @@ func (s *Secret) Delete(ctx context.Context, req *pb.DeleteRequest, rsp *pb.Dele
 	}
 
 	// delete the path
-	vals := config.NewJSONValues([]byte(decrypted))
-	vals.Delete(path)
+	vals, _ := json.NewValues([]byte(decrypted))
+	vals.Del(path)
 
 	// get the data
 	data := vals.Bytes()

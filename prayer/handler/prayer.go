@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/hablullah/go-prayer"
-	"github.com/micro/micro/v5/service/client"
-	"github.com/micro/micro/v5/service/errors"
-	geocode "github.com/micro/services/geocoding/proto"
-	pb "github.com/micro/services/prayer/proto"
-	timepb "github.com/micro/services/time/proto"
+	"go-micro.dev/v5/client"
+	"go-micro.dev/v5/errors"
+	geocode "m3o.com/geocoding/proto"
+	pb "m3o.com/prayer/proto"
+	timepb "m3o.com/time/proto"
 )
 
 type Prayer struct {

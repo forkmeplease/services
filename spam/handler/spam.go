@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/Teamwork/spamc"
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	log "github.com/micro/micro/v5/service/logger"
-	spam "github.com/micro/services/spam/proto"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	log "go-micro.dev/v5/logger"
 	"gopkg.in/gomail.v2"
+	spam "m3o.com/spam/proto"
 )
 
 type conf struct {

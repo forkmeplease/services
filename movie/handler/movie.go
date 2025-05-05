@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
 
-	pb "github.com/micro/services/movie/proto"
+	pb "m3o.com/movie/proto"
 )
 
 type Movie struct {

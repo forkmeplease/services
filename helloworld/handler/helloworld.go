@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 
-	"github.com/micro/micro/v5/service/logger"
-	helloworld "github.com/micro/services/helloworld/proto"
+	"go-micro.dev/v5/logger"
+	helloworld "m3o.com/helloworld/proto"
 )
 
 type Helloworld struct{}

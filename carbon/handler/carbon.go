@@ -3,13 +3,13 @@ package handler
 import (
 	"context"
 
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/services/carbon/domain"
-	"github.com/micro/services/pkg/api"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"m3o.com/carbon/domain"
+	"m3o.com/pkg/api"
 
-	pb "github.com/micro/services/carbon/proto"
+	pb "m3o.com/carbon/proto"
 )
 
 type Carbon struct {

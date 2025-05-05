@@ -34,7 +34,7 @@ func parseQueryStringRec(items chan item) (*simplejson.Json, error) {
 itemLoop:
 	for it := range items {
 		if it.typ == itemError {
-			return nil, fmt.Errorf(it.val)
+			return nil, fmt.Errorf("%v", it.val)
 		}
 
 		switch it.typ {

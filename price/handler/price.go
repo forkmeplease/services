@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	"github.com/micro/services/pkg/tenant"
-	"github.com/micro/services/price/crawler"
-	pb "github.com/micro/services/price/proto"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	"m3o.com/pkg/tenant"
+	"m3o.com/price/crawler"
+	pb "m3o.com/price/proto"
 )
 
 type Price struct {
@@ -202,7 +202,7 @@ func (p *Price) Get(ctx context.Context, req *pb.GetRequest, rsp *pb.GetResponse
 	if len(req.Currency) > 0 {
 		key = path.Join("price", key, strings.ToLower(req.Currency), "latest")
 
-		r, err := store.Read(key, store.ReadPrefix(), store.ReadOrder(store.OrderDesc))
+		r, err := store.Read(key, store.ReadPrefix())
 		if err != nil && err != store.ErrNotFound {
 			return err
 		}

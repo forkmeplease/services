@@ -7,11 +7,11 @@ import (
 	"path"
 
 	"github.com/asim/mq/broker"
-	"github.com/micro/micro/v5/service/errors"
-	log "github.com/micro/micro/v5/service/logger"
-	pb "github.com/micro/services/mq/proto"
-	"github.com/micro/services/pkg/tenant"
+	"go-micro.dev/v5/errors"
+	log "go-micro.dev/v5/logger"
 	"google.golang.org/protobuf/types/known/structpb"
+	pb "m3o.com/mq/proto"
+	"m3o.com/pkg/tenant"
 )
 
 type Mq struct{}

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	pb "github.com/micro/services/address/proto"
-	"github.com/micro/services/pkg/api"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	pb "m3o.com/address/proto"
+	"m3o.com/pkg/api"
 )
 
 var (

@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/micro/micro/v5/service/store"
 	"github.com/pkg/errors"
+	"go-micro.dev/v5/store"
 
-	pb "github.com/micro/services/contact/proto"
-	"github.com/micro/services/pkg/tenant"
+	pb "m3o.com/contact/proto"
+	"m3o.com/pkg/tenant"
 )
 
 type Contact interface {

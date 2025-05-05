@@ -4,12 +4,12 @@ import (
 	"database/sql"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/services/db/handler"
-	pb "github.com/micro/services/db/proto"
-	admin "github.com/micro/services/pkg/service/proto"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
+	"m3o.com/db/handler"
+	pb "m3o.com/db/proto"
+	admin "m3o.com/pkg/service/proto"
 )
 
 var dbAddress = "postgresql://postgres:postgres@localhost:5432/db?sslmode=disable"

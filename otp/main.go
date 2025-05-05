@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/micro/services/otp/handler"
-	pb "github.com/micro/services/otp/proto"
-	admin "github.com/micro/services/pkg/service/proto"
+	"m3o.com/otp/handler"
+	pb "m3o.com/otp/proto"
+	admin "m3o.com/pkg/service/proto"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/logger"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
 )
 
 func main() {

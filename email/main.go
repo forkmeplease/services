@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/services/email/handler"
-	pb "github.com/micro/services/email/proto"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
+	"m3o.com/email/handler"
+	pb "m3o.com/email/proto"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	)
 
 	// Register handler
-	pb.RegisterEmailHandler(srv.Server(), handler.NewEmailHandler(srv))
+	pb.RegisterEmailHandler(srv.Server(), handler.NewEmailHandler())
 
 	// Run service
 	if err := srv.Run(); err != nil {

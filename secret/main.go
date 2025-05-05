@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/micro/services/secret/handler"
-	pb "github.com/micro/services/secret/proto"
+	"m3o.com/secret/handler"
+	pb "m3o.com/secret/proto"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/logger"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
 )
 
 func main() {

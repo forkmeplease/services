@@ -10,17 +10,17 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	pauth "github.com/micro/services/pkg/auth"
-	adminpb "github.com/micro/services/pkg/service/proto"
-	"github.com/micro/services/pkg/tenant"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
 	"golang.org/x/crypto/bcrypt"
+	pauth "m3o.com/pkg/auth"
+	adminpb "m3o.com/pkg/service/proto"
+	"m3o.com/pkg/tenant"
 
-	otp "github.com/micro/services/otp/proto"
-	"github.com/micro/services/user/domain"
-	pb "github.com/micro/services/user/proto"
+	otp "m3o.com/otp/proto"
+	"m3o.com/user/domain"
+	pb "m3o.com/user/proto"
 )
 
 const (

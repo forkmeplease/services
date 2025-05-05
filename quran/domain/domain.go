@@ -3,7 +3,7 @@ package domain
 import (
 	"strings"
 
-	pb "github.com/micro/services/quran/proto"
+	pb "m3o.com/quran/proto"
 )
 
 var (

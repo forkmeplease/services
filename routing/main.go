@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/micro/services/routing/handler"
-	pb "github.com/micro/services/routing/proto"
+	"m3o.com/routing/handler"
+	pb "m3o.com/routing/proto"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/logger"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
 	"googlemaps.github.io/maps"
 )
 

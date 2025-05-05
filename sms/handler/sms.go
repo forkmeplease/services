@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/kevinburke/twilio-go"
-	"github.com/micro/micro/v5/service/auth"
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	"github.com/micro/services/pkg/tenant"
-	pb "github.com/micro/services/sms/proto"
+	"go-micro.dev/v5/auth"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	"m3o.com/pkg/tenant"
+	pb "m3o.com/sms/proto"
 )
 
 const (

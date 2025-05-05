@@ -10,15 +10,14 @@ import (
 	"net/mail"
 	"regexp"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/client"
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	log "github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	pb "github.com/micro/services/email/proto"
-	"github.com/micro/services/pkg/tenant"
-	spampb "github.com/micro/services/spam/proto"
+	"go-micro.dev/v5/client"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	log "go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	pb "m3o.com/email/proto"
+	"m3o.com/pkg/tenant"
+	spampb "m3o.com/spam/proto"
 )
 
 const (
@@ -37,7 +36,7 @@ type emailConf struct {
 	PoolName  string `json:"ip_pool_name"`
 }
 
-func NewEmailHandler(svc *service.Service) *Email {
+func NewEmailHandler() *Email {
 	c := emailConf{}
 	val, err := config.Get("email")
 	if err != nil {
@@ -52,7 +51,7 @@ func NewEmailHandler(svc *service.Service) *Email {
 	}
 	return &Email{
 		c,
-		spampb.NewSpamService("spam", svc.Client()),
+		spampb.NewSpamService("spam", client.DefaultClient),
 	}
 }
 
@@ -94,7 +93,7 @@ func (e *Email) Send(ctx context.Context, request *pb.SendRequest, response *pb.
 		From:     request.From,
 		Subject:  request.Subject,
 	}
-	rsp, err := e.spamSvc.Classify(ctx, spamReq, client.WithAuthToken())
+	rsp, err := e.spamSvc.Classify(ctx, spamReq, client.WithServiceToken())
 	if err != nil || rsp.IsSpam {
 		log.Errorf("Error validating email %s %v", err, rsp)
 		return errors.InternalServerError("email.send", "Error validating email")

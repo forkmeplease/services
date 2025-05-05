@@ -6,9 +6,9 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/micro/micro/v5/service/errors"
-	pb "github.com/micro/services/news/proto"
-	"github.com/micro/services/pkg/api"
+	"go-micro.dev/v5/errors"
+	pb "m3o.com/news/proto"
+	"m3o.com/pkg/api"
 )
 
 type News struct {

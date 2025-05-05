@@ -9,18 +9,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/client"
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	cachepb "github.com/micro/services/cache/proto"
-	pauth "github.com/micro/services/pkg/auth"
-	adminpb "github.com/micro/services/pkg/service/proto"
-	"github.com/micro/services/pkg/tenant"
-	url "github.com/micro/services/url/proto"
 	"github.com/teris-io/shortid"
+	"go-micro.dev/v5/client"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	cachepb "m3o.com/cache/proto"
+	pauth "m3o.com/pkg/auth"
+	adminpb "m3o.com/pkg/service/proto"
+	"m3o.com/pkg/tenant"
+	url "m3o.com/url/proto"
 )
 
 const hostPrefix = "https://m3o.one/u/"
@@ -34,7 +33,7 @@ type Url struct {
 	hostPrefix string
 }
 
-func NewUrl(svc *service.Service) *Url {
+func NewUrl() *Url {
 	var hp string
 
 	cfg, err := config.Get("url.host_prefix")
@@ -47,7 +46,7 @@ func NewUrl(svc *service.Service) *Url {
 	}
 
 	return &Url{
-		cache:      cachepb.NewCacheService("cache", svc.Client()),
+		cache:      cachepb.NewCacheService("cache", client.DefaultClient),
 		hostPrefix: hp,
 	}
 }
@@ -269,7 +268,7 @@ func (e *Url) List(ctx context.Context, req *url.ListRequest, rsp *url.ListRespo
 		if err := rec.Decode(uri); err != nil {
 			continue
 		}
-		crsp, err := e.cache.Get(ctx, &cachepb.GetRequest{Key: cacheKey(strings.TrimPrefix(rec.Key, prefix))}, client.WithAuthToken())
+		crsp, err := e.cache.Get(ctx, &cachepb.GetRequest{Key: cacheKey(strings.TrimPrefix(rec.Key, prefix))}, client.WithServiceToken())
 		if err != nil {
 			logger.Errorf("Error reading cache %s", err)
 			return errInternal
@@ -316,7 +315,7 @@ func (e *Url) Resolve(ctx context.Context, req *url.ResolveRequest, rsp *url.Res
 		_, err := e.cache.Increment(context.Background(), &cachepb.IncrementRequest{
 			Key:   cacheKey(id),
 			Value: 1,
-		}, client.WithAuthToken())
+		}, client.WithServiceToken())
 		if err != nil {
 			logger.Errorf("Error incrementing cache %s", err)
 		}
@@ -355,7 +354,7 @@ func (e *Url) DeleteData(ctx context.Context, request *adminpb.DeleteDataRequest
 		if err := store.Delete(key); err != nil {
 			return err
 		}
-		e.cache.Delete(ctx, &cachepb.DeleteRequest{Key: cacheKey(id)}, client.WithAuthToken())
+		e.cache.Delete(ctx, &cachepb.DeleteRequest{Key: cacheKey(id)}, client.WithServiceToken())
 	}
 	logger.Infof("Deleted %d objects from S3 for %s", len(keys), request.TenantId)
 

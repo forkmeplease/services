@@ -4,11 +4,11 @@ import (
 	"context"
 	"strings"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
 	"googlemaps.github.io/maps"
 
-	pb "github.com/micro/services/geocoding/proto"
+	pb "m3o.com/geocoding/proto"
 )
 
 var (

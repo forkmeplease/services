@@ -5,14 +5,14 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	pauth "github.com/micro/services/pkg/auth"
-	adminpb "github.com/micro/services/pkg/service/proto"
-	"github.com/micro/services/pkg/tenant"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	pauth "m3o.com/pkg/auth"
+	adminpb "m3o.com/pkg/service/proto"
+	"m3o.com/pkg/tenant"
 
-	"github.com/micro/services/contact/domain"
-	pb "github.com/micro/services/contact/proto"
+	"m3o.com/contact/domain"
+	pb "m3o.com/contact/proto"
 )
 
 type contact struct {

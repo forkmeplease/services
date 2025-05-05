@@ -5,11 +5,11 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	pb "github.com/micro/services/youtube/proto"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
+	pb "m3o.com/youtube/proto"
 )
 
 type Youtube struct {

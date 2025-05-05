@@ -1,12 +1,12 @@
 package main
 
 import (
-	admin "github.com/micro/services/pkg/service/proto"
-	"github.com/micro/services/url/handler"
-	pb "github.com/micro/services/url/proto"
+	admin "m3o.com/pkg/service/proto"
+	"m3o.com/url/handler"
+	pb "m3o.com/url/proto"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/logger"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 		service.Name("url"),
 		service.Version("latest"),
 	)
-	h := handler.NewUrl(srv)
+	h := handler.NewUrl()
 	// Register handler
 	pb.RegisterUrlHandler(srv.Server(), h)
 	admin.RegisterAdminHandler(srv.Server(), h)

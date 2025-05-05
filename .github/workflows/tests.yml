@@ -37,5 +37,5 @@ jobs:
         id: tests
         env:
           IN_TRAVIS_CI: yes
-          POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+          POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable
         run: go test -v -p 1 ./...

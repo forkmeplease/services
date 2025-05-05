@@ -12,17 +12,16 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	log "github.com/micro/micro/v5/service/logger"
-	pauth "github.com/micro/services/pkg/auth"
-	adminpb "github.com/micro/services/pkg/service/proto"
-	"github.com/micro/services/pkg/tenant"
-	pb "github.com/micro/services/search/proto"
 	open "github.com/opensearch-project/opensearch-go"
 	openapi "github.com/opensearch-project/opensearch-go/opensearchapi"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	log "go-micro.dev/v5/logger"
 	"google.golang.org/protobuf/types/known/structpb"
+	pauth "m3o.com/pkg/auth"
+	adminpb "m3o.com/pkg/service/proto"
+	"m3o.com/pkg/tenant"
+	pb "m3o.com/search/proto"
 )
 
 var (
@@ -61,7 +60,7 @@ type catIndicesEntry struct {
 	Index string `json:"index"`
 }
 
-func New(srv *service.Service) *Search {
+func New() *Search {
 	v, err := config.Get("search")
 	if err != nil {
 		log.Fatalf("Failed to load config %s", err)

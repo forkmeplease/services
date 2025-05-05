@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/micro/micro/v5/service/auth"
+	"go-micro.dev/v5/auth"
 )
 
 const (

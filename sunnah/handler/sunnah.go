@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/services/pkg/api"
-	"github.com/micro/services/sunnah/domain"
-	pb "github.com/micro/services/sunnah/proto"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"m3o.com/pkg/api"
+	"m3o.com/sunnah/domain"
+	pb "m3o.com/sunnah/proto"
 )
 
 var (

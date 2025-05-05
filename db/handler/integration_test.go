@@ -7,12 +7,12 @@ import (
 
 	"database/sql"
 
-	"github.com/micro/micro/v5/service/auth"
-	db "github.com/micro/services/db/proto"
+	"go-micro.dev/v5/auth"
 	"google.golang.org/protobuf/types/known/structpb"
+	db "m3o.com/db/proto"
 )
 
-const dbAddr = "postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable"
+const dbAddr = "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
 
 func getHandler(t *testing.T) *Db {
 	sqlDB, err := sql.Open("pgx", dbAddr)

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/services/wallet/handler"
-	pb "github.com/micro/services/wallet/proto"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
+	"m3o.com/wallet/handler"
+	pb "m3o.com/wallet/proto"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	)
 
 	// Register handler
-	pb.RegisterWalletHandler(srv.Server(), handler.NewHandler(srv))
+	pb.RegisterWalletHandler(srv.Server(), handler.NewHandler())
 
 	// Run service
 	if err := srv.Run(); err != nil {

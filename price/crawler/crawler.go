@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	"github.com/micro/services/pkg/api"
-	pb "github.com/micro/services/price/proto"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	"m3o.com/pkg/api"
+	pb "m3o.com/price/proto"
 )
 
 type Crawler struct {

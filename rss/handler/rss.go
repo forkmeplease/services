@@ -7,14 +7,14 @@ import (
 	"hash/fnv"
 	"strings"
 
-	"github.com/micro/micro/v5/service/errors"
-	log "github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
-	pauth "github.com/micro/services/pkg/auth"
-	adminpb "github.com/micro/services/pkg/service/proto"
+	"go-micro.dev/v5/errors"
+	log "go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
+	pauth "m3o.com/pkg/auth"
+	adminpb "m3o.com/pkg/service/proto"
 
-	"github.com/micro/services/pkg/tenant"
-	pb "github.com/micro/services/rss/proto"
+	"m3o.com/pkg/tenant"
+	pb "m3o.com/rss/proto"
 )
 
 type Rss struct {

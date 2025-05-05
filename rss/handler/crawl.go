@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/SlyMarbo/rss"
-	log "github.com/micro/micro/v5/service/logger"
-	"github.com/micro/micro/v5/service/store"
+	log "go-micro.dev/v5/logger"
+	"go-micro.dev/v5/store"
 
-	"github.com/micro/services/rss/parser"
-	pb "github.com/micro/services/rss/proto"
+	"m3o.com/rss/parser"
+	pb "m3o.com/rss/proto"
 )
 
 var (

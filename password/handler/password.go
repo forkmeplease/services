@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"strings"
 
-	pb "github.com/micro/services/password/proto"
+	pb "m3o.com/password/proto"
 )
 
 const (

@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	pb "github.com/micro/services/currency/proto"
 	"github.com/patrickmn/go-cache"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	pb "m3o.com/currency/proto"
 )
 
 var (

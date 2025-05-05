@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/services/pkg/api"
-	"github.com/micro/services/quran/domain"
-	pb "github.com/micro/services/quran/proto"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	"m3o.com/pkg/api"
+	"m3o.com/quran/domain"
+	pb "m3o.com/quran/proto"
 )
 
 const (

@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"googlemaps.github.io/maps"
 
-	"github.com/micro/services/geocoding/handler"
-	pb "github.com/micro/services/geocoding/proto"
+	"m3o.com/geocoding/handler"
+	pb "m3o.com/geocoding/proto"
 )
 
 const (

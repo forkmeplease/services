@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/micro/services/holidays/handler"
-	pb "github.com/micro/services/holidays/proto"
+	"m3o.com/holidays/handler"
+	pb "m3o.com/holidays/proto"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/logger"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
 )
 
 func main() {

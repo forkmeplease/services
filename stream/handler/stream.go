@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/services/pkg/tenant"
-	"github.com/micro/services/stream/domain"
-	pb "github.com/micro/services/stream/proto"
+	"go-micro.dev/v5/errors"
+	"m3o.com/pkg/tenant"
+	"m3o.com/stream/domain"
+	pb "m3o.com/stream/proto"
 )
 
 type Stream struct{}

@@ -3,14 +3,14 @@ package handler
 import (
 	"context"
 
-	"github.com/micro/micro/v5/service/config"
-	me "github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
 	"github.com/pkg/errors"
+	"go-micro.dev/v5/config"
+	me "go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
 	"golang.org/x/text/language"
 	"google.golang.org/api/option"
 
-	pb "github.com/micro/services/translate/proto"
+	pb "m3o.com/translate/proto"
 
 	"cloud.google.com/go/translate"
 )

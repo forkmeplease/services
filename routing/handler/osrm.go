@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/gojuno/go.osrm"
-	"github.com/micro/micro/v5/service/errors"
-	pb "github.com/micro/services/routing/proto"
 	"github.com/paulmach/go.geo"
+	"go-micro.dev/v5/errors"
+	pb "m3o.com/routing/proto"
 )
 
 type OSRM struct {

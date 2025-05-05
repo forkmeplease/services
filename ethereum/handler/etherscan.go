@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/micro/micro/v5/service/config"
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	pb "github.com/micro/services/ethereum/proto"
-	"github.com/micro/services/pkg/api"
+	"go-micro.dev/v5/config"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	pb "m3o.com/ethereum/proto"
+	"m3o.com/pkg/api"
 )
 
 // Etherscan handler

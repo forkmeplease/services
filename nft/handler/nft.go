@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 
-	pb "github.com/micro/services/nft/proto"
+	pb "m3o.com/nft/proto"
 )
 
 type Nft struct{}

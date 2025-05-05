@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	pb "github.com/micro/services/bitcoin/proto"
-	"github.com/micro/services/pkg/api"
 	"github.com/patrickmn/go-cache"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
+	pb "m3o.com/bitcoin/proto"
+	"m3o.com/pkg/api"
 )
 
 type Bitcoin struct {

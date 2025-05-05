@@ -4,11 +4,11 @@ import (
 	"context"
 	"strings"
 
-	"github.com/micro/micro/v5/service/errors"
-	"github.com/micro/micro/v5/service/logger"
-	pb "github.com/micro/services/google/proto"
+	"go-micro.dev/v5/errors"
+	"go-micro.dev/v5/logger"
 	"google.golang.org/api/customsearch/v1"
 	"google.golang.org/api/option"
+	pb "m3o.com/google/proto"
 )
 
 type Google struct {

@@ -4,10 +4,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/micro/micro/v5/service"
-	"github.com/micro/micro/v5/service/logger"
-	"github.com/micro/services/id/handler"
-	pb "github.com/micro/services/id/proto"
+	"go-micro.dev/v5/logger"
+	"go-micro.dev/v5/service"
+	"m3o.com/id/handler"
+	pb "m3o.com/id/proto"
 )
 
 func init() {
