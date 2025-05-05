@@ -48,7 +48,7 @@ require (
 	github.com/segmentio/ksuid v1.0.4
 	github.com/sendgrid/sendgrid-go v3.10.0+incompatible
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	github.com/tkuchiki/go-timezone v0.2.2
 	github.com/xanzy/go-gitlab v0.35.1
@@ -64,6 +64,8 @@ require (
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.9
 )
+
+require go.etcd.io/bbolt v1.4.0 // indirect
 
 require (
 	cloud.google.com/go v0.112.0 // indirect
@@ -134,7 +136,7 @@ require (
 	github.com/xdg-go/stringprep v1.0.2 // indirect
 	github.com/xrash/smetrics v0.0.0-20240312152122-5f08fbb34913 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
-	go-micro.dev/v5 v5.5.1-0.20250505133954-ef4dc8b5b0b7
+	go-micro.dev/v5 v5.5.1-0.20250505210232-8eb280126aa0
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.47.0 // indirect
 	go.opentelemetry.io/otel v1.22.0 // indirect
@@ -143,7 +145,7 @@ require (
 	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240415180920-8c6c420018be // indirect
